@@ -303,7 +303,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.45rem, 0.85vw, 1.1rem);
+  gap: clamp(0.6rem, 1.1vw, 1.4rem);
   list-style: none;
   margin: 0 auto;
   padding: 0;
@@ -312,12 +312,15 @@ body {
 .nav-link {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: clamp(0.85rem, 0.9vw, 0.95rem);
-  font-weight: 500;
+  font-size: clamp(0.98rem, 1.05vw, 1.08rem);
+  font-weight: 600;
   white-space: nowrap !important;
   transition: color var(--transition-fast), background var(--transition-fast);
-  padding: 0.32rem 0.45rem;
-  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .nav-link:hover {
