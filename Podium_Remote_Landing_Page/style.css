@@ -348,6 +348,200 @@ body {
   white-space: nowrap;
 }
 
+/* Hamburger Toggle Button */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+  gap: 5px;
+  transition: all 0.22s ease;
+  z-index: 1001;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  background: rgba(94, 245, 121, 0.12);
+  border-color: rgba(94, 245, 121, 0.35);
+}
+
+.hamburger-line {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
+}
+
+.hamburger-btn.is-active .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+  background: #5ef579;
+}
+.hamburger-btn.is-active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-btn.is-active .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+  background: #5ef579;
+}
+
+/* Mobile Nav Drawer */
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2000;
+  display: none;
+}
+
+.mobile-nav-drawer.is-open {
+  display: block;
+}
+
+.mobile-nav-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-nav-drawer.is-open .mobile-nav-backdrop {
+  opacity: 1;
+}
+
+.mobile-nav-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(85vw, 320px);
+  height: 100%;
+  background: #101513;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.mobile-nav-drawer.is-open .mobile-nav-panel {
+  transform: translateX(0);
+}
+
+.mobile-nav-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 1rem;
+}
+
+.mobile-nav-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #72ff88;
+}
+
+.mobile-nav-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mobile-nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #c5d4cd;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item:active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mobile-nav-highlight {
+  color: #ffd875 !important;
+  background: rgba(255, 184, 0, 0.08);
+  border: 1px solid rgba(255, 184, 0, 0.2);
+}
+
+.mobile-nav-cta {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Footer Accordion Base Rules */
+.footer-accordion-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  display: block;
+  cursor: default;
+  pointer-events: none;
+  width: 100%;
+}
+
+.footer-accordion-arrow {
+  display: none;
+}
+
+.footer-accordion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -3598,30 +3792,19 @@ img, video {
 
   .brand-tagline,
   .nav-links,
-  .nav-actions .btn-secondary {
+  .nav-actions {
     display: none !important;
   }
 
-  .nav-actions {
+  .hamburger-btn {
     display: flex !important;
-    align-items: center !important;
-    flex-shrink: 0 !important;
-  }
-
-  .nav-actions .btn-primary {
-    font-size: 0.76rem !important;
-    padding: 0.38rem 0.72rem !important;
-    min-height: 34px !important;
-    border-radius: 999px !important;
-    white-space: nowrap !important;
-    letter-spacing: -0.01em !important;
   }
 
   /* 2. Hero Section */
   .hero-section {
     min-height: auto !important;
-    padding-top: calc(var(--nav-height) + 1.8rem) !important;
-    padding-bottom: 2.8rem !important;
+    padding-top: calc(var(--nav-height) + 1.2rem) !important;
+    padding-bottom: 2.4rem !important;
   }
 
   .hero-container {
@@ -3630,62 +3813,86 @@ img, video {
   }
 
   .status-pill {
-    padding: 5px 10px !important;
-    font-size: 0.76rem !important;
+    padding: 3px 8px !important;
+    font-size: 0.65rem !important;
     max-width: 100% !important;
+    margin: 0 auto 0.75rem auto !important;
+    gap: 4px !important;
+    border-radius: 999px !important;
   }
 
   .telemetry-badge {
-    font-size: 0.7rem !important;
-    padding: 2px 6px !important;
+    font-size: 0.6rem !important;
+    padding: 2px 5px !important;
   }
 
   .telemetry-text {
-    font-size: 0.74rem !important;
+    font-size: 0.63rem !important;
+    letter-spacing: -0.01em !important;
+    white-space: normal !important;
   }
 
   .hero-title {
-    font-size: clamp(1.85rem, 7.2vw, 2.45rem) !important;
-    line-height: 1.15 !important;
-    margin-bottom: 1.25rem !important;
+    font-size: clamp(2.1rem, 8.4vw, 2.7rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.03em !important;
+    margin-bottom: 0.85rem !important;
   }
 
   .hero-subhead-wrapper {
-    margin-bottom: 2rem !important;
+    margin-bottom: 1.4rem !important;
     width: 100% !important;
   }
 
   .hero-subhead-lead-box {
-    margin-bottom: 0.9rem !important;
+    margin-bottom: 0.45rem !important;
   }
 
   .hero-subhead-lead {
-    font-size: 1.1rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #c5a582 !important;
     line-height: 1.35 !important;
     text-align: center !important;
   }
 
   .hero-subhead-body {
-    font-size: 0.92rem !important;
-    line-height: 1.55 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.45 !important;
     text-align: center !important;
     padding: 0 4px !important;
+    color: #8fa098 !important;
   }
 
   .hero-cta-group {
-    flex-direction: column !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     width: 100% !important;
-    max-width: 320px !important;
-    margin: 0 auto 1.8rem auto !important;
-    gap: 0.75rem !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin: 0 auto 1.4rem auto !important;
   }
 
   .hero-cta-group .btn {
-    width: 100% !important;
+    flex: 1 1 0 !important;
+    max-width: 175px !important;
+    min-width: 0 !important;
+    width: auto !important;
+    padding: 0.72rem 0.65rem !important;
+    font-size: 0.82rem !important;
+    min-height: 44px !important;
+    white-space: nowrap !important;
     justify-content: center !important;
-    padding: 0.85rem 1.4rem !important;
-    font-size: 0.96rem !important;
-    min-height: 48px !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .hero-cta-group .btn svg {
+    width: 14px !important;
+    height: 14px !important;
+    margin-right: 4px !important;
+    flex-shrink: 0 !important;
   }
 
   .hero-proof-glass {
@@ -4384,17 +4591,18 @@ img, video {
 
   /* 13. Site Footer */
   .site-footer {
-    padding: 2.8rem 0 1.8rem 0 !important;
+    padding: 2.4rem 0 1.6rem 0 !important;
   }
 
   .footer-top {
     grid-template-columns: 1fr !important;
-    gap: 22px !important;
-    padding-bottom: 22px !important;
+    gap: 12px !important;
+    padding-bottom: 18px !important;
   }
 
   .footer-brand-col {
     max-width: 100% !important;
+    margin-bottom: 0.5rem !important;
   }
 
   .footer-bio {
@@ -4407,9 +4615,61 @@ img, video {
     padding: 4px 10px !important;
   }
 
+  /* Footer Accordion styling for mobile */
+  .footer-accordion {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 0.25rem !important;
+  }
+
+  .footer-accordion-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    padding: 0.75rem 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+  }
+
+  .footer-accordion-toggle .footer-col-title {
+    margin-bottom: 0 !important;
+    font-size: 0.95rem !important;
+    color: #ffffff !important;
+  }
+
+  .footer-accordion-arrow {
+    display: inline-block !important;
+    color: #5ef579 !important;
+    font-size: 0.9rem !important;
+    transition: transform 0.25s ease !important;
+  }
+
+  .footer-accordion.is-open .footer-accordion-arrow {
+    transform: rotate(180deg) !important;
+  }
+
+  .footer-accordion-body {
+    max-height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease !important;
+    padding: 0 !important;
+    gap: 8px !important;
+  }
+
+  .footer-accordion.is-open .footer-accordion-body {
+    max-height: 600px !important;
+    opacity: 1 !important;
+    padding: 0.4rem 0 0.9rem 0 !important;
+  }
+
   .footer-links-group a {
     font-size: 0.86rem !important;
-    padding: 3px 0 !important;
+    padding: 4px 0 !important;
   }
 
   .footer-bottom {
@@ -4444,13 +4704,18 @@ img, video {
     font-size: 0.92rem !important;
   }
 
-  .nav-actions .btn-primary {
-    font-size: 0.7rem !important;
-    padding: 0.35rem 0.6rem !important;
+  .hero-title {
+    font-size: 1.85rem !important;
   }
 
-  .hero-title {
-    font-size: 1.65rem !important;
+  .hero-cta-group {
+    flex-direction: row !important;
+    gap: 6px !important;
+  }
+
+  .hero-cta-group .btn {
+    font-size: 0.75rem !important;
+    padding: 0.65rem 0.45rem !important;
   }
 
   .price-amount {

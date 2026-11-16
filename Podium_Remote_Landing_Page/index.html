@@ -217,7 +217,36 @@
         <div class="nav-actions">
           <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm btn-oval">Buy Lifetime Access →</a>
         </div>
+
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open Navigation Menu" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
       </nav>
+
+      <!-- Mobile Navigation Drawer -->
+      <div class="mobile-nav-drawer" id="mobileNavDrawer" aria-hidden="true">
+        <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+        <div class="mobile-nav-panel">
+          <div class="mobile-nav-top">
+            <span class="mobile-nav-title">Menu</span>
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">&times;</button>
+          </div>
+          <ul class="mobile-nav-menu">
+            <li><a href="#features" class="mobile-nav-item">Features</a></li>
+            <li><a href="#how-it-works" class="mobile-nav-item">How It Works</a></li>
+            <li><a href="#pricing" class="mobile-nav-item">Pricing</a></li>
+            <li><a href="#platform-vote" class="mobile-nav-item mobile-nav-highlight"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.27c.65-.79 1.09-1.89.97-2.99-.96.04-2.13.64-2.82 1.43-.61.69-1.14 1.8-1 2.87 1.08.08 2.19-.52 2.85-1.31Z"/></svg>iPhone Vote</a></li>
+            <li><a href="#faq" class="mobile-nav-item">FAQ</a></li>
+          </ul>
+          <div class="mobile-nav-cta">
+            <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.95rem;">
+              Buy Lifetime Access →
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -1439,27 +1468,36 @@
             Built with craft & care in Bengaluru, Bharat 🇮🇳
           </p>
           <div class="footer-challenge-badge">
-            <span class="badge-dot"></span> 365 Days Experiment | Day 4
+            <span class="badge-dot"></span> 365 Days of Experiment | Day 4
           </div>
         </div>
 
         <!-- Col 2: Navigation -->
-        <div class="footer-links-group">
-          <span class="footer-col-title">Navigation</span>
-          <a href="#how-it-works">How It Works</a>
-          <a href="#demo-video">Video Demo</a>
-          <a href="#problem">The Problem</a>
-          <a href="#features">Core USPs</a>
-          <a href="#comparison">Why Us</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#platform-vote">iPhone Vote</a>
-          <a href="#faq">FAQ</a>
+        <div class="footer-links-group footer-accordion" id="footerNavAccordion">
+          <button class="footer-accordion-toggle" type="button" aria-expanded="false" aria-controls="footerNavLinks">
+            <span class="footer-col-title">Navigation</span>
+            <span class="footer-accordion-arrow">▾</span>
+          </button>
+          <div class="footer-accordion-body" id="footerNavLinks">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#demo-video">Video Demo</a>
+            <a href="#problem">The Problem</a>
+            <a href="#features">Core USPs</a>
+            <a href="#comparison">Why Us</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#platform-vote">iPhone Vote</a>
+            <a href="#faq">FAQ</a>
+          </div>
         </div>
 
         <!-- Col 3: Founder Channels -->
-        <div class="footer-links-group footer-social-col">
-          <span class="footer-col-title">Founder Channels</span>
-          <div class="footer-social-icons-list">
+        <div class="footer-links-group footer-social-col footer-accordion" id="footerFounderAccordion">
+          <button class="footer-accordion-toggle" type="button" aria-expanded="false" aria-controls="footerFounderLinks">
+            <span class="footer-col-title">Founder Channels</span>
+            <span class="footer-accordion-arrow">▾</span>
+          </button>
+          <div class="footer-accordion-body" id="footerFounderLinks">
+            <div class="footer-social-icons-list">
             <a href="https://x.com/ErKiranKumar_" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Twitter / X (@ErKiranKumar_)">
               <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
               <span>Twitter / X</span>
@@ -1490,11 +1528,16 @@
             </a>
           </div>
         </div>
+      </div>
 
         <!-- Col 4: Writings, Community & Socials -->
-        <div class="footer-links-group footer-social-col">
-          <span class="footer-col-title">Writings & Community</span>
-          <div class="footer-social-icons-list">
+        <div class="footer-links-group footer-social-col footer-accordion" id="footerWritingsAccordion">
+          <button class="footer-accordion-toggle" type="button" aria-expanded="false" aria-controls="footerWritingsLinks">
+            <span class="footer-col-title">Writings & Community</span>
+            <span class="footer-accordion-arrow">▾</span>
+          </button>
+          <div class="footer-accordion-body" id="footerWritingsLinks">
+            <div class="footer-social-icons-list">
             <a href="https://substack.com/@kirankumar778023" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Substack">
               <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg></span>
               <span>Substack</span>
@@ -1528,13 +1571,14 @@
               <span>Email / Teams</span>
             </a>
           </div>
+          </div>
         </div>
       </div>
 
       <!-- Bottom Meta Copyright -->
       <div class="footer-bottom">
         <p>© 2026 Podium Remote. All rights reserved. 100% Offline-First Architecture.</p>
-        <p class="footer-subtext">WhatsApp Community: <a href="https://chat.whatsapp.com/IsuedXNntC66BHgE1JfXwX" target="_blank" rel="noopener noreferrer" style="color:#72ff88; text-decoration:underline;">Link</a> • Built by Kiran Kumar</p>
+        <p class="footer-subtext">WhatsApp Community: <a href="https://chat.whatsapp.com/IsuedXNntC66BHgE1JfXwX" target="_blank" rel="noopener noreferrer" style="color:#72ff88; text-decoration:underline;">Link</a></p>
       </div>
     </div>
   </footer>

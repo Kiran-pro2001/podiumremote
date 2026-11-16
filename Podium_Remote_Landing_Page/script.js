@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initCockpitSimulator();
   initFaqAccordion();
   init3DParallaxTilt();
+  initMobileNav();
+  initFooterAccordion();
 });
 
 /* ==========================================================================
@@ -495,6 +497,92 @@ function init3DParallaxTilt() {
 
     card.addEventListener("mouseleave", () => {
       card.style.transform = "";
+    });
+  });
+}
+
+/* ==========================================================================
+   5. Mobile Navigation Drawer (Hamburger)
+   ========================================================================== */
+function initMobileNav() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const mobileNavDrawer = document.getElementById("mobileNavDrawer");
+  const mobileNavClose = document.getElementById("mobileNavClose");
+  const mobileNavBackdrop = document.getElementById("mobileNavBackdrop");
+  const mobileNavItems = document.querySelectorAll(".mobile-nav-item, .mobile-nav-cta .btn");
+
+  if (!hamburgerBtn || !mobileNavDrawer) return;
+
+  function openDrawer() {
+    hamburgerBtn.classList.add("is-active");
+    hamburgerBtn.setAttribute("aria-expanded", "true");
+    mobileNavDrawer.classList.add("is-open");
+    mobileNavDrawer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeDrawer() {
+    hamburgerBtn.classList.remove("is-active");
+    hamburgerBtn.setAttribute("aria-expanded", "false");
+    mobileNavDrawer.classList.remove("is-open");
+    mobileNavDrawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  hamburgerBtn.addEventListener("click", () => {
+    const isOpen = mobileNavDrawer.classList.contains("is-open");
+    if (isOpen) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
+
+  if (mobileNavClose) {
+    mobileNavClose.addEventListener("click", closeDrawer);
+  }
+
+  if (mobileNavBackdrop) {
+    mobileNavBackdrop.addEventListener("click", closeDrawer);
+  }
+
+  mobileNavItems.forEach((item) => {
+    item.addEventListener("click", closeDrawer);
+  });
+}
+
+/* ==========================================================================
+   6. Mobile Footer Accordion Dropdowns
+   ========================================================================== */
+function initFooterAccordion() {
+  const toggles = document.querySelectorAll(".footer-accordion-toggle");
+
+  toggles.forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      // Only active on mobile viewports (< 768px)
+      if (window.innerWidth > 768) return;
+
+      const parentAccordion = toggle.closest(".footer-accordion");
+      if (!parentAccordion) return;
+
+      const isOpen = parentAccordion.classList.contains("is-open");
+
+      // Close other accordions for clean single-drawer behavior
+      document.querySelectorAll(".footer-accordion").forEach((acc) => {
+        if (acc !== parentAccordion) {
+          acc.classList.remove("is-open");
+          const btn = acc.querySelector(".footer-accordion-toggle");
+          if (btn) btn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      if (isOpen) {
+        parentAccordion.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+      } else {
+        parentAccordion.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+      }
     });
   });
 }
