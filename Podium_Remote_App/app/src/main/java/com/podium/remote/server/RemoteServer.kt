@@ -1,0 +1,1220 @@
+package com.podium.remote.server
+
+import android.content.Context
+import android.util.Log
+import fi.iki.elonen.NanoHTTPD
+import org.java_websocket.WebSocket
+import org.java_websocket.handshake.ClientHandshake
+import org.java_websocket.server.WebSocketServer
+import org.json.JSONObject
+import java.net.InetSocketAddress
+
+class RemoteServer(
+    private val context: Context,
+    private val httpPort: Int = 8080,
+    private val wsPort: Int = 8088,
+    private val onCommandReceived: (command: String, requestId: String, params: JSONObject) -> Unit
+) {
+
+    private val TAG = "PodiumRemoteServer"
+    private var webSocketServer: PodiumWebSocketServer? = null
+    private var httpServer: PodiumHttpServer? = null
+
+    fun start() {
+        try {
+            webSocketServer = PodiumWebSocketServer(InetSocketAddress(wsPort))
+            webSocketServer?.start()
+            Log.d(TAG, "WebSocket server started on port $wsPort")
+
+            httpServer = PodiumHttpServer(httpPort)
+            httpServer?.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
+            Log.d(TAG, "HTTP Dashboard server started on port $httpPort")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start servers", e)
+        }
+    }
+
+    fun stop() {
+        try {
+            webSocketServer?.stop()
+            httpServer?.stop()
+            Log.d(TAG, "Servers stopped successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping servers", e)
+        }
+    }
+
+    fun broadcast(event: String, data: JSONObject = JSONObject()) {
+        val payload = JSONObject().apply {
+            put("event", event)
+            put("data", data)
+            put("timestamp", System.currentTimeMillis())
+        }.toString()
+        webSocketServer?.broadcast(payload)
+    }
+
+    fun sendAck(requestId: String, status: String, message: String, data: JSONObject? = null) {
+        val payload = JSONObject().apply {
+            put("event", "ACK")
+            put("requestId", requestId)
+            put("status", status)
+            put("message", message)
+            if (data != null) {
+                put("data", data)
+            }
+        }.toString()
+        webSocketServer?.broadcast(payload)
+    }
+
+    private inner class PodiumWebSocketServer(address: InetSocketAddress) : WebSocketServer(address) {
+        override fun onOpen(conn: WebSocket?, handshake: ClientHandshake?) {
+            Log.d(TAG, "WS Client connected: ${conn?.remoteSocketAddress}")
+            onCommandReceived("CLIENT_CONNECTED", System.currentTimeMillis().toString(), JSONObject())
+        }
+
+        override fun onClose(conn: WebSocket?, code: Int, reason: String?, remote: Boolean) {
+            Log.d(TAG, "WS Client disconnected: $reason")
+        }
+
+        override fun onMessage(conn: WebSocket?, message: String?) {
+            if (message == null) return
+            try {
+                val json = JSONObject(message)
+                val action = json.optString("action", "")
+                val requestId = json.optString("requestId", System.currentTimeMillis().toString())
+                val params = json.optJSONObject("params") ?: JSONObject()
+                onCommandReceived(action, requestId, params)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to parse WS message: $message", e)
+            }
+        }
+
+        override fun onError(conn: WebSocket?, ex: Exception?) {
+            Log.e(TAG, "WS Error", ex)
+        }
+
+        override fun onStart() {
+            Log.d(TAG, "WebSocket server started listening on port $wsPort")
+        }
+    }
+
+    private inner class PodiumHttpServer(port: Int) : NanoHTTPD(port) {
+        override fun serve(session: IHTTPSession): Response {
+            val uri = session.uri
+            return when {
+                uri == "/ping" -> newFixedLengthResponse(Response.Status.OK, "application/json", "{\"status\":\"ok\",\"app\":\"PodiumRemote\",\"version\":\"1.3.0\"}")
+                uri == "/" || uri == "/index.html" -> newFixedLengthResponse(Response.Status.OK, "text/html", getDashboardHtml())
+                else -> newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found")
+            }
+        }
+    }
+
+    private fun getDashboardHtml(): String {
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Podium Remote Cockpit — Zero-Latency Camera Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-space: #070908;
+      --card-bg: rgba(16, 20, 18, 0.95);
+      --border-panel: #222b26;
+      --bevel-top: rgba(255, 255, 255, 0.22);
+      --bevel-bottom: #090c0a;
+      
+      --accent-green: #29d943;
+      --accent-green-glow: rgba(41, 217, 67, 0.5);
+      --accent-sage: #82a896;
+      --accent-sand: #d4b594;
+      --accent-coral: #e0606a;
+      --accent-coral-glow: rgba(224, 96, 106, 0.6);
+      
+      --capsule-bg: rgba(24, 31, 28, 0.85);
+      --capsule-border: rgba(255, 255, 255, 0.09);
+      --text-main: #f5f8f6;
+      --text-muted: #82948c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-space);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Spatial Background Grid & Nebula */
+    .space-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .grid-plane {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background-image: 
+        linear-gradient(rgba(130, 168, 150, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(130, 168, 150, 0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      transform: perspective(600px) rotateX(45deg);
+      animation: gridDrift 45s linear infinite;
+    }
+    @keyframes gridDrift {
+      0% { transform: perspective(600px) rotateX(45deg) translateY(0); }
+      100% { transform: perspective(600px) rotateX(45deg) translateY(44px); }
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.22;
+    }
+    .orb-1 {
+      top: 5%;
+      left: 15%;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #5b8772 0%, transparent 70%);
+    }
+    .orb-2 {
+      bottom: 5%;
+      right: 15%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #a8845e 0%, transparent 70%);
+    }
+
+    /* Floating Bookmark Tip (Top Right of Screen) */
+    .screen-tip-bookmark {
+      position: fixed;
+      top: 16px;
+      right: 24px;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(20, 27, 24, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      color: #cbdcd3;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .screen-tip-bookmark.hide {
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+    }
+    .screen-tip-bookmark code {
+      background: rgba(0,0,0,0.45);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--accent-sand);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92em;
+    }
+    .tip-close-btn {
+      cursor: pointer;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      line-height: 1;
+      padding: 0 4px;
+      transition: color 0.15s ease;
+    }
+    .tip-close-btn:hover { color: #fff; }
+
+    /* 60% Scale Executive Cockpit Console */
+    .cockpit-box {
+      position: relative;
+      z-index: 2;
+      width: 60vw;
+      min-width: 860px;
+      max-width: 1080px;
+      min-height: 84vh;
+      max-height: 94vh;
+      background: var(--card-bg);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid var(--border-panel);
+      border-top: 1.5px solid var(--bevel-top);
+      border-bottom: 2.5px solid var(--bevel-bottom);
+      border-radius: 24px;
+      padding: 22px 28px;
+      box-shadow: 
+        0 35px 90px rgba(0,0,0,0.92), 
+        0 0 60px rgba(130, 168, 150, 0.08),
+        inset 0 1px 1px rgba(255,255,255,0.18);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Top Executive Header Bar */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-shrink: 0;
+    }
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
+    }
+    .brand-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      white-space: nowrap;
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      font-size: 1.42rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      word-spacing: normal;
+      color: #ffffff;
+      line-height: 1.15;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .brand-subtitle {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-sage);
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+
+    /* Header Telemetry HUD Group (Compact Glassmorphic Capsules) */
+    .header-hud-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hud-capsule {
+      background: var(--capsule-bg);
+      border: 1px solid var(--capsule-border);
+      border-top: 1.2px solid rgba(255,255,255,0.18);
+      border-bottom: 1.5px solid rgba(0,0,0,0.5);
+      border-radius: 999px;
+      padding: 5px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #d6e2dc;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      white-space: nowrap;
+      cursor: default;
+    }
+    .hud-capsule svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+    .hud-capsule .hud-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: #ffffff;
+    }
+    .hud-capsule .hud-val.good { color: #5ef579; }
+    .hud-capsule .hud-val.accent { color: var(--accent-sand); }
+
+    /* Visual 3D Battery Progress Meter */
+    .battery-meter-shell {
+      position: relative;
+      width: 24px;
+      height: 12px;
+      border: 1.5px solid #82a896;
+      border-radius: 3px;
+      padding: 1px;
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+      margin-right: 2px;
+    }
+    .battery-meter-fill {
+      height: 100%;
+      border-radius: 1.5px;
+      background: linear-gradient(90deg, #29d943, #5ef579);
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+    }
+    .battery-meter-fill.low {
+      background: linear-gradient(90deg, #e0606a, #ff7582);
+    }
+    .battery-terminal {
+      position: absolute;
+      right: -3px;
+      top: 2.5px;
+      width: 2px;
+      height: 5px;
+      background: #82a896;
+      border-radius: 0 1px 1px 0;
+    }
+
+    /* High-End Avionics Connection Beacon */
+    .avionics-conn-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(24, 38, 29, 0.9);
+      border: 1.2px solid rgba(41, 217, 67, 0.45);
+      border-radius: 999px;
+      padding: 5px 13px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      color: #5ef579;
+      box-shadow: 0 0 16px rgba(41, 217, 67, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+      transition: all 0.2s ease;
+    }
+    .radar-ring {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+    .radar-ring::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid var(--accent-green);
+      animation: radarPing 1.8s infinite ease-out;
+      opacity: 0.7;
+    }
+    @keyframes radarPing {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .avionics-conn-badge.offline {
+      border-color: rgba(224, 96, 106, 0.6);
+      background: rgba(42, 22, 25, 0.9);
+      color: #ff7582;
+      box-shadow: 0 0 16px rgba(224, 96, 106, 0.25);
+    }
+    .avionics-conn-badge.offline .radar-ring {
+      background: var(--accent-coral);
+      box-shadow: 0 0 8px var(--accent-coral);
+    }
+    .avionics-conn-badge.offline .radar-ring::after {
+      animation: none;
+      display: none;
+    }
+
+    /* Central Viewfinder Showcase with Generous Spacing */
+    .vf-section {
+      width: 100%;
+      margin: 16px 0 12px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-grow: 1;
+    }
+    .vf-display-box {
+      position: relative;
+      width: 100%;
+      height: 44vh;
+      min-height: 280px;
+      max-height: 430px;
+      background: #040605;
+      border: 1.5px solid var(--border-panel);
+      border-top: 1.5px solid var(--bevel-top);
+      border-bottom: 2px solid var(--bevel-bottom);
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        inset 0 0 90px rgba(0,0,0,0.96), 
+        0 14px 40px rgba(0,0,0,0.75);
+      transition: height 0.3s ease;
+    }
+    .vf-display-box.collapsed {
+      height: 52px;
+      min-height: 52px;
+    }
+    .vf-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: transparent;
+      transition: transform 0.25s ease;
+    }
+    .vf-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: #63776e;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 24px;
+    }
+    .vf-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 36px;
+      height: 36px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .vf-glass-hud {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .vf-hud-left, .vf-hud-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vf-pill-tag {
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(8, 12, 10, 0.85);
+      color: #a4b7af;
+      border: 1px solid rgba(255,255,255,0.14);
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+    .vf-pill-tag.rec-live {
+      background: rgba(224, 96, 106, 0.6);
+      color: #ffffff;
+      border-color: #ff9ba3;
+      box-shadow: 0 0 20px rgba(224, 96, 106, 0.8);
+    }
+    .vf-pill-tag.mono-time {
+      font-family: 'JetBrains Mono', monospace;
+      color: rgba(255,255,255,0.95);
+    }
+    .vf-interactive-pill {
+      pointer-events: auto;
+      cursor: default;
+    }
+    .vf-orient-highlight {
+      border-color: rgba(212, 181, 148, 0.4);
+      color: var(--accent-sand);
+    }
+
+    /* Studio Monospace Timer Readout with HUD Toast */
+    .timer-console-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 14px 0 24px 0;
+      position: relative;
+    }
+    .timer-readout-huge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3.4rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      color: #ffffff;
+      line-height: 1;
+      text-shadow: 0 6px 26px rgba(0,0,0,0.8), 0 0 40px rgba(255,255,255,0.12);
+      transition: opacity 0.15s ease;
+    }
+
+    /* Floating In-Cockpit HUD Event Banner */
+    .hud-banner-toast {
+      position: absolute;
+      top: -54px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 25, 21, 0.97);
+      border: 1.5px solid rgba(130, 168, 150, 0.55);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      padding: 9px 24px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #ffffff;
+      backdrop-filter: blur(18px);
+      box-shadow: 
+        0 14px 34px rgba(0,0,0,0.85), 
+        0 0 24px rgba(130, 168, 150, 0.28),
+        inset 0 1px 1px rgba(255,255,255,0.22);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      z-index: 20;
+    }
+    .hud-banner-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    /* REAL TACTILE 3D OVAL-CURVED COCKPIT BUTTONS (6 ONE-LINER BUTTONS) */
+    .cockpit-dock-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+    .tactile-btn {
+      position: relative;
+      padding: 0 14px;
+      height: 60px;
+      border-radius: 30px;
+      border: 1px solid #2d3832;
+      border-top: 2px solid rgba(255, 255, 255, 0.26);
+      border-bottom: 4px solid #090d0b;
+      font-size: 0.96rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      user-select: none;
+      background: linear-gradient(180deg, #242c28 0%, #171d1a 100%);
+      color: #ffffff;
+      box-shadow: 
+        0 6px 0 #0b0e0c, 
+        0 10px 22px rgba(0,0,0,0.7), 
+        inset 0 1px 1px rgba(255,255,255,0.18);
+      transition: all 0.12s ease;
+    }
+    .tactile-btn svg {
+      width: 21px;
+      height: 21px;
+      flex-shrink: 0;
+    }
+    .tactile-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 0 #0b0e0c, 
+        0 14px 28px rgba(0,0,0,0.8), 
+        inset 0 1px 1px rgba(255,255,255,0.28);
+    }
+    .tactile-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      border-bottom-width: 1.5px;
+      box-shadow: 
+        0 2px 0 #0b0e0c, 
+        0 4px 10px rgba(0,0,0,0.6), 
+        inset 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    /* 1. Check Framing Button */
+    .btn-frame {
+      border-color: rgba(212, 181, 148, 0.45);
+      color: var(--accent-sand);
+    }
+    .btn-frame:hover { background: linear-gradient(180deg, #2f2a24 0%, #1e1a16 100%); }
+
+    /* 2. Flip Lens Button */
+    .btn-flip {
+      border-color: rgba(130, 168, 150, 0.45);
+      color: var(--accent-sage);
+    }
+    .btn-flip:hover { background: linear-gradient(180deg, #232d28 0%, #161e1a 100%); }
+
+    /* 3. Capture Photo Button */
+    .btn-snap {
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+    .btn-snap:hover { background: linear-gradient(180deg, #2d3531 0%, #1c221f 100%); }
+
+    /* 4. Start Recording Button: 3D Vivid Emerald Engine */
+    .btn-record-go {
+      background: linear-gradient(180deg, #37e652 0%, #22b839 100%);
+      color: #051408;
+      border-color: #4df064;
+      border-top: 2px solid rgba(255, 255, 255, 0.5);
+      border-bottom: 4px solid #10591b;
+      box-shadow: 
+        0 6px 0 #0d4715, 
+        0 10px 24px var(--accent-green-glow), 
+        inset 0 1px 2px rgba(255,255,255,0.45);
+    }
+    .btn-record-go:hover:not(:disabled) {
+      background: linear-gradient(180deg, #44f75f 0%, #28c940 100%);
+      box-shadow: 
+        0 8px 0 #0d4715, 
+        0 14px 30px rgba(41, 217, 67, 0.7);
+    }
+    .btn-record-go:active:not(:disabled) {
+      transform: translateY(3px);
+      border-bottom-width: 1.5px;
+      box-shadow: 0 2px 0 #0d4715, 0 4px 12px rgba(41, 217, 67, 0.5);
+    }
+    .btn-record-go:disabled {
+      background: #17211a;
+      color: #4b5d52;
+      border-color: #222f26;
+      border-bottom-width: 2px;
+      box-shadow: none;
+      cursor: not-allowed;
+      opacity: 0.45;
+      transform: none !important;
+    }
+
+    /* 5. Stop Recording Button: Standby Neutral / Active Ruby Pulse */
+    .btn-record-halt {
+      background: #1c221f;
+      color: #6a7a73;
+      border-color: #2d3632;
+      border-bottom-width: 2px;
+      box-shadow: none;
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-record-halt.active-rec {
+      background: linear-gradient(180deg, #fa6672 0%, #db3b47 100%) !important;
+      color: #ffffff !important;
+      border-color: #ff9ba3 !important;
+      border-top: 2px solid rgba(255, 255, 255, 0.5) !important;
+      border-bottom: 4px solid #6b141b !important;
+      opacity: 1.0 !important;
+      cursor: pointer !important;
+      box-shadow: 
+        0 6px 0 #571015, 
+        0 10px 30px var(--accent-coral-glow), 
+        inset 0 1px 2px rgba(255,255,255,0.45) !important;
+      animation: stopPulse 1.4s infinite ease-in-out;
+    }
+    @keyframes stopPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); box-shadow: 0 0 32px rgba(224, 96, 106, 0.95); }
+    }
+
+    /* 6. Sleep / Wake OLED Switch */
+    .btn-sleep-wake {
+      border-color: #473d2f;
+      color: #f5cca6;
+    }
+    .btn-sleep-wake:hover { background: linear-gradient(180deg, #2e261d 0%, #1c1712 100%); }
+    .btn-sleep-wake.is-dimmed {
+      background: linear-gradient(180deg, #483a26 0%, #2b2216 100%);
+      color: #ffe4be;
+      border-color: #ffd89c;
+      box-shadow: 0 0 20px rgba(255, 216, 156, 0.35);
+    }
+
+    /* Responsive scaling */
+    @media (max-width: 960px) {
+      .cockpit-box { width: 94vw; min-width: auto; padding: 16px; }
+      .cockpit-dock-grid { grid-template-columns: repeat(3, 1fr); }
+      .header-hud-group { flex-wrap: wrap; }
+      .timer-readout-huge { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Spatial Grid & Nebula Background -->
+  <div class="space-bg">
+    <div class="grid-plane"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- Floating Bookmark Tip (Top Right of Screen) -->
+  <div id="screen-bookmark-tip" class="screen-tip-bookmark">
+    <span>💡 <strong>Tip:</strong> Press <code>Ctrl + D</code> to bookmark cockpit</span>
+    <span class="tip-close-btn" onclick="dismissBookmarkTip()">×</span>
+  </div>
+
+  <!-- 60% Scale Executive Cockpit Console -->
+  <div class="cockpit-box">
+    
+    <!-- Top Executive Header Bar -->
+    <div class="header-bar">
+      <div class="brand-section">
+        <!-- Official Application Camera Logo (Matches Phone ic_launcher) -->
+        <svg class="brand-icon" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="108" height="108" rx="24" fill="#141a17"/>
+          <rect x="2" y="2" width="104" height="104" rx="22" stroke="#26332d" stroke-width="3"/>
+          <!-- Top viewfinder prism ridge (gold / sand accent) -->
+          <path d="M48 36H60L64 42H44L48 36Z" stroke="#c5a582" stroke-width="3.5" stroke-linejoin="round" fill="#1e2622"/>
+          <!-- Camera chassis frame (sage green) -->
+          <rect x="34" y="42" width="40" height="30" rx="4" stroke="#7a9a8b" stroke-width="4" fill="#18201c"/>
+          <!-- Camera lens aperture (coral red) -->
+          <circle cx="54" cy="57" r="9" fill="#d9777f"/>
+          <!-- Lens aperture outer focus ring -->
+          <circle cx="54" cy="57" r="14" stroke="#7a9a8b" stroke-width="1.8" stroke-dasharray="3 2.5"/>
+          <!-- Lens optical glass glint reflection -->
+          <circle cx="51.5" cy="54.5" r="2.5" fill="#ffffff" opacity="0.6"/>
+        </svg>
+        <div class="brand-titles">
+          <span class="brand-title">Podium Remote Cockpit</span>
+          <span class="brand-subtitle">Zero Latency Camera Remote Controller</span>
+        </div>
+      </div>
+
+      <!-- Header Telemetry HUD Group (Compact Glassmorphic Capsules) -->
+      <div class="header-hud-group">
+        <!-- Avionics Connection Beacon (CONNECTED / NOT CONNECTED) -->
+        <div id="conn-badge" class="avionics-conn-badge">
+          <span class="radar-ring"></span>
+          <span id="conn-text">CONNECTED</span>
+        </div>
+
+        <!-- Battery Capsule with Visual Progress Bar -->
+        <div class="hud-capsule" title="Phone Battery Level">
+          <div class="battery-meter-shell">
+            <div id="tele-battery-fill" class="battery-meter-fill" style="width: 70%;"></div>
+            <div class="battery-terminal"></div>
+          </div>
+          <span class="hud-val good" id="tele-battery">70%</span>
+        </div>
+
+        <!-- Storage Capsule -->
+        <div class="hud-capsule" title="Phone Free Storage">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          <span class="hud-val" id="tele-storage">20.6 GB</span>
+        </div>
+
+        <!-- Optical Lens Capsule -->
+        <div id="capsule-lens" class="hud-capsule" title="Active Optical Lens (REAR 4K / FRONT 1080p)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          <span class="hud-val accent" id="tele-lens">REAR 4K</span>
+        </div>
+
+        <!-- Framing Mode Capsule -->
+        <div id="capsule-aspect" class="hud-capsule" title="Framing Aspect Ratio (16:9 / 9:16)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          <span class="hud-val" id="tele-aspect">16:9</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Central Viewfinder Showcase with Generous Spacing -->
+    <div class="vf-section">
+      <div id="vf-box" class="vf-display-box">
+        <img id="vf-img" class="vf-img" src="" alt="Live Viewfinder Frame" style="display:none;" />
+        <div id="vf-ph" class="vf-empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Awaiting Viewfinder Signal<br><small style="color:#50645c;">Tap "Check Framing" below to stream a test composition</small></span>
+        </div>
+        <svg class="vf-reticle" viewBox="0 0 32 32" fill="none" stroke="#82a896" stroke-width="1.5"><circle cx="16" cy="16" r="10"/><line x1="16" y1="2" x2="16" y2="8"/><line x1="16" y1="24" x2="16" y2="30"/><line x1="2" y1="16" x2="8" y2="16"/><line x1="24" y1="16" x2="30" y2="16"/></svg>
+        
+        <div class="vf-glass-hud">
+          <div class="vf-hud-left">
+            <div id="vf-status" class="vf-pill-tag">● STANDBY PREVIEW</div>
+            <div id="vf-time" class="vf-pill-tag mono-time">00:00:00</div>
+          </div>
+          <div class="vf-hud-right">
+            <!-- Dynamic Interactive Badges for Lens & Orientation -->
+            <div id="vf-lens-badge" class="vf-pill-tag vf-interactive-pill" onclick="switchCamera()" title="Click to Flip Lens">📷 REAR 4K</div>
+            <div id="vf-orient-badge" class="vf-pill-tag vf-interactive-pill vf-orient-highlight" onclick="checkFraming()" title="Click to Refresh Composition">📐 16:9 WIDE</div>
+            <div class="vf-pill-tag vf-interactive-pill" onclick="togglePreviewCollapse()">▼ Hide</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Studio Timer Readout with Floating HUD Toast -->
+    <div class="timer-console-section">
+      <div id="hud-toast" class="hud-banner-toast">● 4K Recording Started</div>
+      <span class="timer-readout-huge" id="timer">00:00:00</span>
+    </div>
+
+    <!-- REAL TACTILE 3D OVAL-CURVED COCKPIT BUTTONS (6 ONE-LINER BUTTONS) -->
+    <div class="cockpit-dock-grid">
+      <!-- 1. Check Framing Button -->
+      <button class="tactile-btn btn-frame" onclick="checkFraming()" title="10ms Viewfinder Framing Snapshot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/>
+          <path d="M12 7v10M7 12h10"/>
+        </svg>
+        <span>Check Framing</span>
+      </button>
+
+      <!-- 2. Flip Camera Lens Button -->
+      <button id="btn-flip" class="tactile-btn btn-flip" onclick="switchCamera()" title="Switch Front 1080p / Rear 4K Lens">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3L7.17 5H4c-1.1 0-2 0.9-2 2v12c0 1.1 0.9 2 2 2h16c1.1 0 2-0.9 2-2V7c0-1.1-0.9-2-2-2h-3.17L15 3H9z"/>
+          <path d="M14.5 10.5A3.5 3.5 0 0 0 9.2 11.2l-1.2-1.2"/>
+          <path d="M9.5 15.5A3.5 3.5 0 0 0 14.8 14.8l1.2 1.2"/>
+        </svg>
+        <span id="btn-flip-text">Flip Lens</span>
+      </button>
+
+      <!-- 3. Capture Photo Button -->
+      <button class="tactile-btn btn-snap" onclick="capturePhoto()" title="Capture High-Res Photo to Phone Gallery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4.5"/>
+          <circle cx="12" cy="13" r="2" fill="currentColor"/>
+        </svg>
+        <span>Capture Photo</span>
+      </button>
+
+      <!-- 4. Start Recording Button (3D Emerald Engine) -->
+      <button id="btn-start" class="tactile-btn btn-record-go" onclick="startRecord()" title="Start 4K Video Recording">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15 8v8H4c-0.55 0-1-0.45-1-1V9c0-0.55 0.45-1 1-1h11z"/>
+          <path d="M16 10.2l4.8-3.2c0.5-0.33 1.2 0.03 1.2 0.64v8.72c0 0.61-0.7 0.97-1.2 0.64L16 13.8v-3.6z"/>
+        </svg>
+        <span>Start Recording</span>
+      </button>
+
+      <!-- 5. Stop Recording Button (Tactile Ruby Pulse) -->
+      <button id="btn-stop" class="tactile-btn btn-record-halt" onclick="stopRecord()" disabled title="Finalize and Save Recording">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2z"/>
+          <rect x="8" y="8" width="8" height="8" rx="1.5" fill="currentColor"/>
+        </svg>
+        <span>Stop Recording</span>
+      </button>
+
+      <!-- 6. Sleep / Wake OLED Switch -->
+      <button id="btn-dim" class="tactile-btn btn-sleep-wake" onclick="togglePhoneDim()" title="Toggle Screen Sleep / Full Brightness">
+        <svg id="dim-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <span id="btn-dim-text">Sleep Screen</span>
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const isLocalLaptop = ['localhost', '127.0.0.1', '10.26.185.65'].includes(window.location.hostname);
+    const host = (isLocalLaptop || !window.location.hostname) ? '10.26.185.48' : window.location.hostname;
+    const wsUrl = 'ws://' + host + ':8088';
+    let ws = null;
+    let isRecording = false;
+    let isPhoneDimmed = false;
+    let isPreviewCollapsed = false;
+    let toastTimeout = null;
+    let activeLens = 'REAR 4K';
+    let isLandscapeMode = true;
+
+    function dismissBookmarkTip() {
+      const tip = document.getElementById('screen-bookmark-tip');
+      if (tip) tip.classList.add('hide');
+    }
+    setTimeout(dismissBookmarkTip, 8000);
+
+    function smoothResetTimer() {
+      const timerEl = document.getElementById('timer');
+      const vfTimeEl = document.getElementById('vf-time');
+      if (timerEl) {
+        timerEl.style.opacity = '0.25';
+        setTimeout(() => {
+          timerEl.textContent = '00:00:00';
+          timerEl.style.opacity = '1';
+        }, 70);
+      }
+      if (vfTimeEl) {
+        vfTimeEl.textContent = '00:00:00';
+      }
+    }
+
+    function showHudToast(message) {
+      const toast = document.getElementById('hud-toast');
+      if (!toast) return;
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toast.textContent = message;
+      toast.classList.add('show');
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+
+    function togglePreviewCollapse() {
+      const vfBox = document.getElementById('vf-box');
+      const toggleBtn = document.querySelector('.vf-interactive-pill:last-child');
+      isPreviewCollapsed = !isPreviewCollapsed;
+      if (isPreviewCollapsed) {
+        vfBox.classList.add('collapsed');
+        if (toggleBtn) toggleBtn.textContent = '▲ Show';
+      } else {
+        vfBox.classList.remove('collapsed');
+        if (toggleBtn) toggleBtn.textContent = '▼ Hide';
+      }
+    }
+
+    function updateLensDisplay(lensName) {
+      activeLens = lensName;
+      const teleLens = document.getElementById('tele-lens');
+      const vfLensBadge = document.getElementById('vf-lens-badge');
+      const flipBtnText = document.getElementById('btn-flip-text');
+      
+      const isFront = lensName.toUpperCase().includes('FRONT');
+      const shortName = isFront ? 'FRONT 1080p' : 'REAR 4K';
+      
+      if (teleLens) teleLens.textContent = shortName;
+      if (vfLensBadge) vfLensBadge.textContent = isFront ? '🤳 FRONT 1080p' : '📷 REAR 4K';
+      if (flipBtnText) flipBtnText.textContent = isFront ? 'Flip to Rear' : 'Flip to Front';
+    }
+
+    function updateOrientationDisplay(isLandscape) {
+      isLandscapeMode = isLandscape;
+      const teleAspect = document.getElementById('tele-aspect');
+      const vfOrientBadge = document.getElementById('vf-orient-badge');
+      
+      if (isLandscape) {
+        if (teleAspect) teleAspect.textContent = '16:9';
+        if (vfOrientBadge) {
+          vfOrientBadge.textContent = '📐 16:9 WIDE';
+          vfOrientBadge.style.color = 'var(--accent-sand)';
+        }
+        showHudToast('📐 Phone Rotated: 16:9 Widescreen (Landscape Mode)');
+      } else {
+        if (teleAspect) teleAspect.textContent = '9:16';
+        if (vfOrientBadge) {
+          vfOrientBadge.textContent = '📱 9:16 REEL';
+          vfOrientBadge.style.color = '#72ff88';
+        }
+        showHudToast('📱 Phone Rotated: 9:16 Vertical (Reels / Shorts Mode)');
+      }
+    }
+
+    function connect() {
+      ws = new WebSocket(wsUrl);
+      ws.onopen = () => {
+        const badge = document.getElementById('conn-badge');
+        const text = document.getElementById('conn-text');
+        if (text) text.textContent = 'CONNECTED';
+        if (badge) badge.className = 'avionics-conn-badge';
+        showHudToast('● Cockpit Connected to Phone');
+        checkFraming();
+        setTimeout(checkFraming, 500);
+      };
+      ws.onclose = () => {
+        const badge = document.getElementById('conn-badge');
+        const text = document.getElementById('conn-text');
+        if (text) text.textContent = 'NOT CONNECTED';
+        if (badge) badge.className = 'avionics-conn-badge offline';
+        setTimeout(connect, 2000);
+      };
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          handleEvent(msg);
+        } catch (e) {
+          console.error("WS Parse error", e);
+        }
+      };
+    }
+
+    function handleEvent(msg) {
+      const event = msg.event;
+      const data = msg.data || {};
+
+      switch(event) {
+        case 'RECORDING_STARTED':
+          isRecording = true;
+          document.getElementById('timer').textContent = '00:00:00';
+          document.getElementById('vf-time').textContent = '00:00:00';
+          document.getElementById('btn-start').disabled = true;
+          const stopBtn = document.getElementById('btn-stop');
+          stopBtn.disabled = false;
+          stopBtn.classList.add('active-rec');
+          const vfStat = document.getElementById('vf-status');
+          vfStat.textContent = '● RECORDING (4K LIVE)';
+          vfStat.classList.add('rec-live');
+          showHudToast('● 4K Recording Started — Saving to DCIM');
+          break;
+
+        case 'RECORDING_STOPPED':
+          isRecording = false;
+          smoothResetTimer();
+          document.getElementById('btn-start').disabled = false;
+          const sBtn = document.getElementById('btn-stop');
+          sBtn.disabled = true;
+          sBtn.classList.remove('active-rec');
+          const vStat = document.getElementById('vf-status');
+          vStat.textContent = '● STANDBY PREVIEW';
+          vStat.classList.remove('rec-live');
+          showHudToast('✓ Video Saved to /DCIM/PodiumRemote/');
+          break;
+
+        case 'TIMER_TICK':
+          if (!isRecording) {
+            smoothResetTimer();
+            return;
+          }
+          const t = data.formatted || data.time || '00:00:00';
+          document.getElementById('timer').textContent = t;
+          document.getElementById('vf-time').textContent = t;
+          break;
+
+        case 'TELEMETRY':
+          if (data.battery !== undefined) {
+            const b = document.getElementById('tele-battery');
+            const bFill = document.getElementById('tele-battery-fill');
+            if (b) {
+              b.textContent = data.battery + '%';
+              b.className = 'hud-val ' + (data.battery > 20 ? 'good' : 'accent');
+            }
+            if (bFill) {
+              bFill.style.width = Math.max(8, Math.min(100, data.battery)) + '%';
+              if (data.battery <= 20) {
+                bFill.classList.add('low');
+              } else {
+                bFill.classList.remove('low');
+              }
+            }
+          }
+          if (data.storage_gb !== undefined) {
+            document.getElementById('tele-storage').textContent = data.storage_gb + ' GB';
+          }
+          break;
+
+        case 'ORIENTATION_CHANGED':
+          const isLandscape = data.is_landscape !== false;
+          updateOrientationDisplay(isLandscape);
+          break;
+
+        case 'SCREEN_DIM_CHANGED':
+          isPhoneDimmed = !!data.is_dimmed;
+          const dimBtn = document.getElementById('btn-dim');
+          const dimText = document.getElementById('btn-dim-text');
+          const dimIcon = document.getElementById('dim-icon');
+          if (isPhoneDimmed) {
+            dimBtn.classList.add('is-dimmed');
+            dimText.textContent = 'Wake Screen';
+            dimIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+            showHudToast('🌙 Phone Screen Sleeping (Power Saver)');
+          } else {
+            dimBtn.classList.remove('is-dimmed');
+            dimText.textContent = 'Sleep Screen';
+            dimIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+            showHudToast('☀️ Phone Screen Awakened (Full Brightness)');
+          }
+          break;
+
+        case 'FRAMING_SNAPSHOT':
+          if (data.image_data) {
+            const img = document.getElementById('vf-img');
+            const ph = document.getElementById('vf-ph');
+            img.src = data.image_data;
+            img.style.display = 'block';
+            ph.style.display = 'none';
+
+            if (data.is_landscape !== undefined) {
+              updateOrientationDisplay(data.is_landscape);
+            }
+            showHudToast('⚡ Viewfinder Framing Refreshed');
+          }
+          break;
+
+        case 'CAMERA_SWITCHED':
+          if (data.lens) {
+            updateLensDisplay(data.lens);
+            showHudToast('🔄 Switched to ' + data.lens);
+          }
+          break;
+
+        case 'PHOTO_CAPTURED':
+          showHudToast('📷 Photo Saved to Phone Gallery!');
+          break;
+
+        case 'ACK':
+          if (data.lens) {
+            updateLensDisplay(data.lens);
+            showHudToast('🔄 Switched to ' + data.lens);
+          }
+          if (msg.message === 'PHOTO_CAPTURED') {
+            showHudToast('📷 Photo Saved to Phone Gallery!');
+          }
+          break;
+      }
+    }
+
+    function sendCommand(action, params = {}) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          action: action,
+          requestId: 'req_' + Date.now(),
+          params: params
+        }));
+      } else {
+        showHudToast('✕ Connection Lost — Reconnecting...');
+      }
+    }
+
+    function startRecord() {
+      document.getElementById('timer').textContent = '00:00:00';
+      document.getElementById('vf-time').textContent = '00:00:00';
+      sendCommand('START_RECORDING');
+    }
+
+    function stopRecord() {
+      smoothResetTimer();
+      sendCommand('STOP_RECORDING');
+    }
+
+    function switchCamera() {
+      sendCommand('SWITCH_CAMERA');
+    }
+
+    function capturePhoto() {
+      sendCommand('CAPTURE_PHOTO');
+    }
+
+    function checkFraming() {
+      sendCommand('CHECK_FRAMING');
+    }
+
+    function togglePhoneDim() {
+      sendCommand('TOGGLE_DIM');
+    }
+
+    window.addEventListener('DOMContentLoaded', connect);
+  </script>
+</body>
+</html>
+        """.trimIndent()
+    }
+}

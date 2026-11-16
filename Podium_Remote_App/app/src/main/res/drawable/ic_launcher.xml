@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#121514"
+        android:pathData="M0,0h108v108h-108z"/>
+    <!-- Outer tripod / camera frame -->
+    <path
+        android:strokeColor="#7A9A8B"
+        android:strokeWidth="4"
+        android:pathData="M34,42h40v30h-40z"/>
+    <!-- Camera lens -->
+    <path
+        android:fillColor="#D9777F"
+        android:pathData="M54,57m-9,0a9,9 0 1,0 18,0a9,9 0 1,0 -18,0"/>
+    <path
+        android:strokeColor="#C5A582"
+        android:strokeWidth="3"
+        android:pathData="M48,36h12l4,6h-20z"/>
+</vector>

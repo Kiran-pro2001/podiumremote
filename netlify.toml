@@ -1,0 +1,7 @@
+[build]
+  publish = "Podium_Remote_Landing_Page"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

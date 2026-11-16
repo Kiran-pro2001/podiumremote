@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Podium Remote — Your Phone Camera. Controlled From Your Laptop.</title>
+  
+  <!-- Meta Descriptions & Search Engine Directives -->
+  <meta name="description" content="Control your Android tripod camera remotely from any laptop browser over your phone's personal hotspot. Zero cloud, zero video streaming lag, pristine 4K local storage.">
+  <meta name="keywords" content="remote camera control, android camera hotspot, tripod camera controller, solo creator camera remote, event recording, kiran kumar">
+  <meta name="author" content="Kiran Kumar">
+  <link rel="canonical" href="https://podiumremote.app/">
+  <meta name="theme-color" content="#121514">
+
+  <!-- Open Graph / WhatsApp / Facebook / LinkedIn Link Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Podium Remote">
+  <meta property="og:title" content="Podium Remote — Your Phone Camera. Controlled From Your Laptop.">
+  <meta property="og:description" content="Mount your phone on a tripod. Start, stop, and switch cameras directly from your laptop browser over your phone's personal hotspot. Zero cloud. Zero walking back.">
+  <meta property="og:url" content="https://podiumremote.app/">
+  <meta property="og:image" content="https://podiumremote.app/og-image.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Podium Remote — Offline-First Camera Control Cockpit">
+
+  <!-- Twitter / X Large Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ErKiranKumar_">
+  <meta name="twitter:creator" content="@ErKiranKumar_">
+  <meta name="twitter:title" content="Podium Remote — Your Phone Camera. Controlled From Your Laptop.">
+  <meta name="twitter:description" content="Mount your phone on a tripod. Start, stop, and switch cameras directly from your laptop browser over your phone's hotspot. Zero cloud. Zero walking back.">
+  <meta name="twitter:image" content="https://podiumremote.app/og-image.svg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
+
+  <!-- Stylesheet with cache-busting -->
+  <link rel="stylesheet" href="style.css?v=5.3">
+
+  <!-- Critical Platform Vote & FAQ Styles to guarantee zero unstyled flash / caching issues -->
+  <style>
+    .platform-cards-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 2rem !important;
+      max-width: 1100px !important;
+      margin: 0 auto !important;
+    }
+    .platform-card {
+      background: linear-gradient(180deg, #161d19 0%, #101412 100%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border-radius: 20px !important;
+      padding: 2.2rem 2rem !important;
+      display: flex !important;
+      flex-direction: column !important;
+      position: relative !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+    }
+    .platform-card.platform-android {
+      border-top: 3px solid #5ef579 !important;
+    }
+    .platform-card.platform-ios {
+      border-top: 3px solid #ffffff !important;
+      background: linear-gradient(180deg, #1c2420 0%, #111614 100%) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 255, 255, 0.05) !important;
+    }
+    .platform-badge {
+      align-self: flex-start !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      font-size: 0.74rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em !important;
+      padding: 5px 14px !important;
+      border-radius: 999px !important;
+      margin-bottom: 1.25rem !important;
+    }
+    .platform-badge.live {
+      background: rgba(94, 245, 121, 0.15) !important;
+      color: #72ff88 !important;
+      border: 1px solid rgba(94, 245, 121, 0.3) !important;
+    }
+    .platform-badge.vote {
+      background: rgba(255, 184, 0, 0.15) !important;
+      color: #ffd875 !important;
+      border: 1px solid rgba(255, 184, 0, 0.3) !important;
+    }
+    .platform-specs,
+    .platform-specs li {
+      list-style: none !important;
+      list-style-type: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .platform-specs {
+      margin: 0 0 1.8rem 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.75rem !important;
+      flex-grow: 1 !important;
+    }
+    .platform-specs li {
+      font-size: 0.92rem !important;
+      color: #c2d4cb !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      line-height: 1.4 !important;
+    }
+    .platform-specs .spec-check {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 20px !important;
+      height: 20px !important;
+      border-radius: 50% !important;
+      background: rgba(94, 245, 121, 0.15) !important;
+      color: #5ef579 !important;
+      font-size: 0.75rem !important;
+      font-weight: 800 !important;
+      flex-shrink: 0 !important;
+    }
+    .platform-specs .spec-check.apple {
+      background: rgba(255, 255, 255, 0.15) !important;
+      color: #ffffff !important;
+    }
+    .btn-vote-apple {
+      background: #ffffff !important;
+      color: #0b0f0d !important;
+      font-weight: 700 !important;
+      border: 1px solid #ffffff !important;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25) !important;
+    }
+    .btn-vote-apple:hover {
+      background: #e6e6e6 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4) !important;
+    }
+    @media (max-width: 768px) {
+      .platform-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+      }
+      .platform-card {
+        padding: 1.5rem 1.25rem !important;
+      }
+    }
+  </style>
+
+  <!-- JSON-LD Structured Data Schema for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Podium Remote",
+    "operatingSystem": "Android 8.0+, Chrome, Safari, Edge, Firefox",
+    "applicationCategory": "MultimediaApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "1499",
+      "priceCurrency": "INR"
+    },
+    "description": "Offline-first remote smartphone camera controller operating over AirSync™ direct P2P connection for event speakers and creators.",
+    "author": {
+      "@type": "Person",
+      "name": "Kiran Kumar",
+      "jobTitle": "Software Engineer",
+      "sameAs": [
+        "https://www.linkedin.com/in/kiran-kumar-sde/",
+        "https://x.com/ErKiranKumar_",
+        "https://github.com/Kiran-pro2001"
+      ]
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Low-CPU Ambient Particle Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- ==========================================================================
+       Navigation Bar
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar" aria-label="Main Navigation">
+        <a href="#" class="brand-link" aria-label="Podium Remote Home">
+          <div class="brand-icon">
+            <svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
+              <rect width="108" height="108" rx="24" fill="#141a17"/>
+              <rect x="2" y="2" width="104" height="104" rx="22" stroke="#26332d" stroke-width="3"/>
+              <path d="M48 36H60L64 42H44L48 36Z" stroke="#c5a582" stroke-width="3.5" stroke-linejoin="round" fill="#1e2622"/>
+              <rect x="34" y="42" width="40" height="30" rx="4" stroke="#7a9a8b" stroke-width="4" fill="#18201c"/>
+              <circle cx="54" cy="57" r="9" fill="#d9777f"/>
+              <circle cx="54" cy="57" r="14" stroke="#7a9a8b" stroke-width="1.8" stroke-dasharray="3 2.5"/>
+              <circle cx="51.5" cy="54.5" r="2.5" fill="#ffffff" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="brand-text-group">
+            <span class="brand-name">Podium Remote</span>
+            <span class="brand-tagline">Record across the room. Stay where you are.</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+          <li><a href="#pricing" class="nav-link">Pricing</a></li>
+          <li><a href="#platform-vote" class="nav-link nav-link-highlight">iPhone Vote <span class="nav-badge">🔥</span></a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm btn-oval">Buy Lifetime Access →</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+         1. Full-Viewport Hero Fold (100% Viewport Centered)
+         ========================================================================== -->
+    <section class="section hero-section" id="hero">
+      <div class="container hero-container">
+        
+        <!-- Live Telemetry Experience Flag -->
+        <div class="hero-pill-wrapper">
+          <div class="status-pill">
+            <span class="beacon-radar-wrap">
+              <span class="beacon-ping"></span>
+              <span class="beacon-dot"></span>
+            </span>
+            <span class="telemetry-badge">100% OFFLINE</span>
+            <span class="telemetry-text">Zero Cloud • Direct Local Hotspot</span>
+          </div>
+        </div>
+
+        <!-- Grand Main Heading -->
+        <h1 class="hero-title">
+          Your Phone Camera.<br>
+          <span class="text-accent">Controlled From Your Laptop.</span>
+        </h1>
+
+        <!-- Subheading with Underline Lead & Unbold Body -->
+        <div class="hero-subhead-wrapper">
+          <div class="hero-subhead-lead-box">
+            <span class="hero-subhead-lead">Record Across The Room, Stay Where You Are.</span>
+          </div>
+          <p class="hero-subhead-body">
+            Mount your phone on a tripod across the room, check framing live in your laptop browser, trigger native 4K takes, flip lenses, capture photos, and sleep the phone screen, without ever walking over or kneeling down mid-take.
+          </p>
+        </div>
+
+        <!-- Oval / Curve-Shaped CTA Group -->
+        <div class="hero-cta-group">
+          <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-oval">
+            Buy Lifetime Access →
+          </a>
+          <a href="#demo-video" class="btn btn-secondary btn-oval">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            Watch Demo
+          </a>
+        </div>
+
+        <!-- Subtle Background Glassmorphism Proof Container -->
+        <div class="hero-proof-glass">
+          <div class="proof-glass-item">
+            <span class="proof-glass-icon">🛡️</span>
+            <span class="proof-glass-text">100% Offline-First</span>
+          </div>
+          <div class="proof-glass-divider"></div>
+          <div class="proof-glass-item">
+            <span class="proof-glass-icon">📱</span>
+            <span class="proof-glass-text">Android 8.0+ (~8 MB)</span>
+          </div>
+          <div class="proof-glass-divider"></div>
+          <div class="proof-glass-item">
+            <span class="proof-glass-icon">⚡</span>
+            <span class="proof-glass-text">No Laptop Software Required</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         2. Interactive Walkthrough Frame / Live Cockpit Simulator
+         ========================================================================== -->
+    <section class="section cockpit-showcase-section" id="cockpit-demo">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Live Field Verified Cockpit</span>
+          </div>
+          <h2 class="section-title">Your Laptop Browser. Live Camera Command.</h2>
+          <p class="section-subtitle cockpit-subtitle">
+            Stay where you are. Check framing live, hit Record, flip lenses, and save native 4K straight to your phone, without ever walking over or kneeling down to touch the tripod.
+          </p>
+        </div>
+
+        <!-- Web Highlights-Inspired Live Showcase Frame -->
+        <div class="live-showcase-container">
+          <!-- Browser Titlebar -->
+          <div class="showcase-titlebar">
+            <div class="showcase-traffic-lights">
+              <span class="traffic-light red"></span>
+              <span class="traffic-light yellow"></span>
+              <span class="traffic-light green"></span>
+            </div>
+
+            <div class="showcase-url-badge">
+              <span>🔒 https://podium.local/ • AirSync™ DirectLink</span>
+            </div>
+
+            <div class="showcase-status-badge">
+              <span class="status-pulse-dot"></span>
+              <span>AirSync™ Direct P2P • Zero Cloud Latency</span>
+            </div>
+          </div>
+
+          <!-- Dual Device Container: One by One Inside the Rectangular Box -->
+          <div class="showcase-dual-box">
+            
+            <!-- 1. Laptop Browser Cockpit View -->
+            <div class="dual-device-col laptop-col">
+              <div class="dual-device-header">
+                <div class="device-label-group">
+                  <span class="device-icon">💻</span>
+                  <span class="device-title">Laptop Browser (Director Cockpit)</span>
+                </div>
+                <span class="device-status-pill green">● Active Remote Controller</span>
+              </div>
+
+              <div class="device-image-frame laptop-frame">
+                <img src="assets/cockpit-dashboard-live.png" alt="Podium Remote Laptop Web Cockpit Dashboard" class="device-img" />
+              </div>
+
+              <div class="device-feature-tokens">
+                <span class="mini-token">⚡ Live Viewfinder</span>
+                <span class="mini-token">🔴 1-Click 4K Start/Stop</span>
+                <span class="mini-token">🔄 Remote Flip Lens</span>
+                <span class="mini-token">🌙 OLED Screen Sleep</span>
+              </div>
+            </div>
+
+            <!-- Direct P2P Wireless Link Divider (No Bidirectional Arrow) -->
+            <div class="dual-sync-divider">
+              <div class="divider-line"></div>
+              <div class="sync-badge-pill" title="Direct Offline Hotspot Link">
+                <svg class="sync-wifi-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5ef579" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+                  <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+                  <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                  <circle cx="12" cy="20" r="1.5" fill="#5ef579"/>
+                </svg>
+                <span class="sync-badge-label">DIRECT P2P</span>
+                <span class="sync-badge-latency">&lt; 35ms</span>
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <!-- 2. Phone on Tripod Companion View -->
+            <div class="dual-device-col phone-col">
+              <div class="dual-device-header phone-header-row">
+                <div class="device-label-group">
+                  <span class="device-icon">📱</span>
+                  <span class="device-title">Phone on Tripod (Android App)</span>
+                </div>
+                <span class="device-status-pill amber">⚡ AirSync™: Active (podium.local)</span>
+              </div>
+
+              <div class="device-image-frame phone-frame">
+                <img src="assets/phone-companion-screen-synced.png" alt="Podium Remote Phone Companion App Screen" class="device-img phone-app-img" />
+              </div>
+
+              <div class="phone-tokens-row">
+                <span class="mini-token">📹 Native 4K UHD</span>
+                <span class="mini-token">💾 Direct Phone Storage</span>
+                <span class="mini-token">🔋 75% Battery Sync</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Separate Floating Glassmorphism Proof Card -->
+        <div class="showcase-floating-freedom-card">
+          <div class="freedom-card-col">
+            <div class="freedom-beacon-wrap">
+              <span class="freedom-ping"></span>
+              <span class="freedom-dot"></span>
+            </div>
+            <div class="freedom-text-wrap">
+              <span class="freedom-title">Solo Creator Freedom</span>
+              <span class="freedom-desc">Mount your phone on a tripod across the room, stay seated at your desk, and direct every take from your laptop without ever walking over or kneeling down mid-take.</span>
+            </div>
+          </div>
+          <div class="freedom-card-divider"></div>
+          <div class="freedom-card-col">
+            <div class="freedom-beacon-wrap green-beacon">
+              <span class="freedom-ping green-ping"></span>
+              <span class="freedom-dot green-dot"></span>
+            </div>
+            <div class="freedom-text-wrap">
+              <span class="freedom-title">100% Offline-First Architecture</span>
+              <span class="freedom-desc">Zero venue Wi-Fi credentials needed, zero cloud upload, zero accounts, operates via proprietary AirSync™ direct P2P link with under 35ms response time.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Field Video Demo Section
+         ========================================================================== -->
+    <section class="section video-demo-section" id="demo-video">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Real-World Proof • Solo Creator In Action</span>
+          </div>
+          <h2 class="section-title">See It Working in the Field.</h2>
+          <p class="section-subtitle video-demo-subtitle">
+            Watch how a solo creator records an event from the back row: phone mounted on a tripod 25 feet away, <br class="sub-break-desktop">controlled completely from the laptop with zero walking and zero kneeling down.
+          </p>
+        </div>
+
+        <div class="video-container-wrap">
+          <div class="video-frame">
+            <video id="field-demo-video" controls playsinline preload="metadata" poster="assets/video_stills/still_015.jpg">
+              <source src="assets/demo_web.mp4" type="video/mp4">
+              <source src="assets/demo.mp4" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+            <div class="video-caption-bar">
+              <span class="video-status-dot"></span>
+              <span>Live Event Recording • Tripod 25 Feet Away • Direct Local Hotspot • Zero Cloud Dependency</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         Simple 3-Step Setup Flow (Web Highlights Style)
+         ========================================================================== -->
+    <section class="section" id="how-it-works">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Simple 3-Step Setup</span>
+          </div>
+          <h2 class="section-title">From Tripod to Cockpit in 30 Seconds.</h2>
+          <p class="section-subtitle single-line-subtitle">
+            No Bluetooth pairing glitches. No venue Wi-Fi logins. No software or drivers to install on your computer.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-number">01</div>
+              <span class="step-pill">SETUP PHASE</span>
+            </div>
+            <h3 class="step-title">Mount & Launch Hotspot</h3>
+            <p class="step-desc">
+              Mount your Android phone on your tripod. Turn on personal hotspot and open Podium Remote. The phone instantly spins up your private AirSync™ cockpit.
+            </p>
+            <div class="step-visual">
+              <div class="step-metric-row">
+                <span class="step-badge green">🟢 AirSync™ Active</span>
+                <span class="step-ip-text">podium.local</span>
+              </div>
+              <div class="step-sub-note">0 KB mobile cellular data consumed</div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-number">02</div>
+              <span class="step-pill">CONNECTION PHASE</span>
+            </div>
+            <h3 class="step-title">Connect Laptop Browser</h3>
+            <p class="step-desc">
+              Connect your Mac, Windows PC, Linux, or iPad to your phone's Wi-Fi network. Open Chrome or Safari and enter the IP address displayed on your phone.
+            </p>
+            <div class="step-visual">
+              <div class="step-metric-row">
+                <span class="step-badge blue">🔒 Local LAN (0ms Lag)</span>
+                <span class="step-ip-text">Zero Laptop Software</span>
+              </div>
+              <div class="step-sub-note">Works inside any standard web browser</div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-header">
+              <div class="step-number">03</div>
+              <span class="step-pill">COMMAND PHASE</span>
+            </div>
+            <h3 class="step-title">Command in Pristine 4K</h3>
+            <p class="step-desc">
+              Check speaker framing, hit record, flip camera lenses, and sleep the OLED screen to save 60%+ battery, all from the comfort of your seat at the back of the room.
+            </p>
+            <div class="step-visual">
+              <div class="step-metric-row">
+                <span class="step-badge amber">⏱️ 00:00:00 Sync</span>
+                <span class="step-ip-text">🌙 OLED Sleep Active</span>
+              </div>
+              <div class="step-sub-note">Uncompressed 4K video saved safely to phone</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         3. The Solo Creator Knee-Down Dilemma
+         ========================================================================== -->
+    <section class="section" id="problem">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>The Solo Creator Dilemma</span>
+          </div>
+          <h2 class="section-title">Tired of Kneeling Down at Your Tripod for Every Take?</h2>
+          <p class="section-subtitle problem-subtitle">
+            Smartphones have magnificent 4K cameras. But when you record alone, every single take <br class="sub-break-desktop">requires an awkward knee-down marathon just to check framing and press start/stop.
+          </p>
+        </div>
+
+        <!-- Real Event Setup Proof Context Banner -->
+        <div class="problem-context-banner">
+          <div class="problem-context-visual">
+            <img src="assets/solo-creator-room-context.jpg" alt="Actual event setup: tripod elevated at the front, creator controlling from the back row" />
+            <div class="context-overlay-pill">
+              <span>📍 Actual Field Setup: Phone on Tripod 25 Feet Away at Front • Creator Controlling from Back Row</span>
+            </div>
+          </div>
+          <div class="problem-context-content">
+            <span class="problem-pill-tag">THE PHYSICAL REALITY</span>
+            <h3>The 25-Foot Tripod Barrier</h3>
+            <p>
+              When you record an event, lecture, or tutorial alone, your phone is elevated on a tripod. Every time you want to record, you have to kneel down awkwardly in front of the lens to check focus, press record, rush back to your spot, and try to catch your breath.
+            </p>
+            <p>
+              Mess up your opening lines 20 seconds in? You have to get up, walk across the room, knee-down again, stop, restart, and sprint back. It ruins your speaking momentum and exhausts your creative energy.
+            </p>
+          </div>
+        </div>
+
+        <!-- 3 Expanded Reality Cards -->
+        <div class="reality-cards-grid">
+          <!-- Card 1 -->
+          <div class="reality-card">
+            <div>
+              <div class="reality-tag">PAIN POINT 01</div>
+              <h3 class="reality-title">The "Knee-Down & Sprint" Ritual</h3>
+              <p class="reality-body">
+                Kneeling down in front of your tripod, tapping record, and rushing back to beat the 3-second timer. You start your talk out of breath, adjust your clothes, and spend 30 minutes later cutting dead air.
+              </p>
+            </div>
+            <div class="reality-visual-metric">
+              <span class="loss-number">15+ times</span>
+              <span>kneeling down per recording session without a remote crew</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="reality-card">
+            <div>
+              <div class="reality-tag">PAIN POINT 02</div>
+              <h3 class="reality-title">Blind Takes & Ruined Framing</h3>
+              <p class="reality-body">
+                You deliver a 20-minute talk or passionate tutorial, only to walk back to your tripod and realize your head was cropped out, autofocus locked onto the background, or the lens was on 1x instead of wide.
+              </p>
+            </div>
+            <div class="reality-visual-metric">
+              <span class="loss-number">100% Blind</span>
+              <span>recording with zero live viewfinder feedback from your seat</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="reality-card">
+            <div>
+              <div class="reality-tag">PAIN POINT 03</div>
+              <h3 class="reality-title">Overheating & Battery Depletion</h3>
+              <p class="reality-body">
+                Recording continuous 4K with the smartphone screen blazing bright generates immense heat, throttles camera sensor performance, and shuts down your camera app mid-sentence.
+              </p>
+            </div>
+            <div class="reality-visual-metric">
+              <span class="loss-number">60%+ Heat</span>
+              <span>reduced with Podium Remote's one-click OLED Screen Sleep</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Founder Quote Banner -->
+        <div class="founder-quote-banner">
+          <div class="quote-glyph">“</div>
+          <div class="quote-content">
+            <p class="quote-text">
+              At every tech demo day and college seminar, I watched speakers jog to their tripods or cross their fingers hoping a blind Bluetooth clicker worked. We don't need heavy cloud infrastructure or battery-killing video streams. We just need deterministic remote control over a direct hotspot.
+            </p>
+            <div class="quote-author">
+              Kiran Kumar <span class="quote-role">• Founder, 365 Days Product Experiment</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         4. Core Features / Hardware Utility Grid
+         ========================================================================== -->
+        <section class="section" id="features">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Core USPs</span>
+          </div>
+          <h2 class="section-title">Built For Absolute Field Reliability</h2>
+          <p class="section-subtitle single-line-subtitle">
+            Engineered around the physical realities of solo creators, conference auditoriums, and remote recording setups.
+          </p>
+        </div>
+
+        <!-- 4-Pillar USP Bento Grid (Web Highlights Style) -->
+        <div class="bento-usp-grid">
+          
+          <!-- Pillar 1: 100% Offline Hotspot Protocol -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-pill">Works In Dead Zones</div>
+              <h3 class="bento-title">100% Offline & Local Hotspot</h3>
+              <p class="bento-desc">
+                No venue Wi-Fi passwords, no captive portals, and zero mobile data consumed. Your phone creates a private AirSync™ direct offline link, your laptop connects directly over ultra-fast local peer-to-peer hardware. Works in basements, auditoriums, and outdoor parks.
+              </p>
+            </div>
+            <div class="bento-visual-preview">
+              <div class="bento-hud-row">
+                <div class="bento-hud-node">
+                  <span class="hud-icon">📱</span>
+                  <div>
+                    <div class="hud-sub">AIRSYNC™ DIRECT</div>
+                    <div class="hud-val">podium.local</div>
+                  </div>
+                </div>
+                <div class="bento-hud-wire">
+                  <span class="hud-wire-line"></span>
+                  <span class="hud-wire-badge">0% CLOUD • ZERO DATA</span>
+                </div>
+                <div class="bento-hud-node">
+                  <span class="hud-icon">💻</span>
+                  <div>
+                    <div class="hud-sub">BROWSER COCKPIT</div>
+                    <div class="hud-val">Chrome / Safari / Edge</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pillar 2: Pristine 4K Storage + Zero Overheating -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-pill">Optical Fidelity</div>
+              <h3 class="bento-title">Pristine 4K Storage (No Overheating)</h3>
+              <p class="bento-desc">
+                Streaming apps (Camo, DroidCam) force continuous 30fps streaming over Wi-Fi, causing phones to overheat and drop frames in 15 minutes. Podium Remote records native uncompressed 4K directly to internal storage, using lightweight on-demand stills for framing.
+              </p>
+            </div>
+            <div class="bento-visual-preview">
+              <div class="bento-hud-row">
+                <div class="bento-hud-badge-group">
+                  <span class="bento-chip green">● NATIVE 4K @ 60FPS</span>
+                  <span class="bento-chip neutral">Direct /DCIM/Camera</span>
+                  <span class="bento-chip mint">0°C ADDED HEAT</span>
+                </div>
+              </div>
+              <div class="bento-spec-sub">Zero network video compression • Saved directly to phone internal UFS chip</div>
+            </div>
+          </div>
+
+          <!-- Pillar 3: Remote OLED Screen Sleep Mode -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-pill">Battery Preservation</div>
+              <h3 class="bento-title">Remote OLED Screen Sleep</h3>
+              <p class="bento-desc">
+                Recording a 1-hour keynote or course lecture? One click from your laptop blacks out the phone's OLED display completely. Saves over 60% battery and stops distracting stage glare while pristine 4K video continues rolling in the background.
+              </p>
+            </div>
+            <div class="bento-visual-preview">
+              <div class="bento-hud-row">
+                <div class="bento-hud-node">
+                  <span class="hud-icon">☀️</span>
+                  <div>
+                    <div class="hud-sub">NORMAL PREVIEW</div>
+                    <div class="hud-val red-text">100% Power • Hot Screen</div>
+                  </div>
+                </div>
+                <div class="bento-hud-arrow">➔</div>
+                <div class="bento-hud-node highlight">
+                  <span class="hud-icon">🌙</span>
+                  <div>
+                    <div class="hud-sub">SLEEP MODE (ACTIVE)</div>
+                    <div class="hud-val green-text">35% Power • 4K Rolling</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pillar 4: Live Telemetry & Smooth Timer Reset -->
+          <div class="bento-card">
+            <div>
+              <div class="bento-pill">Deterministic Feedback</div>
+              <h3 class="bento-title">Live Telemetry & Smooth Timer</h3>
+              <p class="bento-desc">
+                Never suffer from blind clicker anxiety. See real-time battery % with an animated 3D gauge, exact remaining storage in GB, active optical lens, and an atomic stop engine that always snaps smoothly to 00:00:00 every time you stop.
+              </p>
+            </div>
+            <div class="bento-visual-preview">
+              <div class="bento-cockpit-hud">
+                <div class="hud-timer-block">
+                  <span class="rec-beacon-dot"></span>
+                  <span class="hud-timer-digits">00:00:00</span>
+                  <span class="hud-timer-status">ATOMIC RESET</span>
+                </div>
+                <div class="hud-stat-pill battery">
+                  <span class="stat-dot green"></span>
+                  <span>BAT 49% (Good)</span>
+                </div>
+                <div class="hud-stat-pill storage">
+                  <span class="stat-dot amber"></span>
+                  <span>STORAGE 23.8 GB</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         Dual Hardware Ecosystem Section (Phone App + Laptop Cockpit)
+         ========================================================================== -->
+    <section class="section" id="ecosystem" style="background: rgba(14, 18, 16, 0.4); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+      <div class="container">
+        
+        <div class="dual-system-wrap">
+          <!-- Left: Phone Companion App -->
+          <div class="phone-mockup-frame">
+            <img src="assets/phone-companion-screen-synced.png" alt="Podium Remote Android Companion App Screen" />
+          </div>
+
+          <!-- Right: System Information -->
+          <div class="dual-info-block">
+            <div class="section-label">
+              <span class="dot"></span>
+              <span>Two-Piece Architecture</span>
+            </div>
+            <h3>Your Phone on the Tripod.<br><span style="color:var(--accent-sage-light);">Your Laptop as Director.</span></h3>
+            <p style="color:var(--text-secondary); line-height:1.6; font-size:1.05rem;">
+              Podium Remote turns your Android phone into an autonomous remote recording rig. The companion app pairs with our proprietary ColdSensor™ 4K Engine, while serving a zero-install cockpit directly to any laptop browser.
+            </p>
+
+            <ul class="dual-feature-list">
+              <li class="dual-feature-item">
+                <div class="dual-feature-icon">✓</div>
+                <div><strong>Tactile 3×3 Matrix Buttons:</strong> Large, curved 3D touch buttons designed for quick on-tripod setup.</div>
+              </li>
+              <li class="dual-feature-item">
+                <div class="dual-feature-icon">✓</div>
+                <div><strong>Collapsible Hotspot Pod:</strong> One-tap QR code sharing and cockpit URL copy to connect your laptop in 10 seconds.</div>
+              </li>
+              <li class="dual-feature-item">
+                <div class="dual-feature-icon">✓</div>
+                <div><strong>Instant Optical Lens Flipping:</strong> Switch effortlessly between Rear (4K) and Front (1080p) from either device.</div>
+              </li>
+              <li class="dual-feature-item">
+                <div class="dual-feature-icon">✓</div>
+                <div><strong>Zero-Install Browser Cockpit:</strong> Nothing to download on your Mac, Windows PC, or iPad, works right inside Chrome.</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         5. The One-Liner Comparison Matrix
+         ========================================================================== -->
+    <section class="section" id="comparison">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Uncompromising Comparison</span>
+          </div>
+          <h2 class="section-title">Why Podium Remote Succeeds, Where Others Fail</h2>
+          <p class="section-subtitle single-line-subtitle">
+            See how direct-hotspot control compares to blind hardware clickers and heavy video streaming utilities.
+          </p>
+        </div>
+
+        <div class="matrix-grid">
+          <!-- Column 1 -->
+          <div class="matrix-card">
+            <div class="matrix-header">
+              <div class="matrix-eyebrow">Option A</div>
+              <div class="matrix-name">Bluetooth Clickers</div>
+            </div>
+            <ul class="matrix-list">
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Blind single button: zero feedback if recording started</span>
+              </li>
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Drops connection beyond 15 feet in crowded rooms</span>
+              </li>
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Coin battery dies mid-presentation without warning</span>
+              </li>
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Cannot flip between front and rear cameras</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="matrix-card">
+            <div class="matrix-header">
+              <div class="matrix-eyebrow">Option B</div>
+              <div class="matrix-name">Streaming / Cam Apps</div>
+            </div>
+            <ul class="matrix-list">
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Overheats phone within 15 minutes of live video streaming</span>
+              </li>
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Compresses 4K video over network with frame drops</span>
+              </li>
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Requires bloated desktop drivers and account logins</span>
+              </li>
+              <li class="matrix-item cross">
+                <span class="matrix-icon">✕</span>
+                <span>Expensive annual subscriptions ($39 to $80/year)</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 3: Flagship -->
+          <div class="matrix-card flagship">
+            <div class="matrix-header">
+              <div class="matrix-eyebrow">Flagship Choice</div>
+              <div class="matrix-name">Podium Remote</div>
+            </div>
+            <ul class="matrix-list">
+              <li class="matrix-item check">
+                <span class="matrix-icon">✓</span>
+                <span>100% offline, no cloud needed, zero data consumed</span>
+              </li>
+              <li class="matrix-item check">
+                <span class="matrix-icon">✓</span>
+                <span>Deterministic laptop feedback: live timer, battery % and storage</span>
+              </li>
+              <li class="matrix-item check">
+                <span class="matrix-icon">✓</span>
+                <span>Pristine 4K recording directly to internal phone memory</span>
+              </li>
+              <li class="matrix-item check">
+                <span class="matrix-icon">✓</span>
+                <span>Zero laptop install: works in Chrome, Safari, Edge, or Firefox</span>
+              </li>
+              <li class="matrix-item check">
+                <span class="matrix-icon">✓</span>
+                <span>Remote OLED screen sleep: saves 60%+ battery during long takes</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         6. Honest, Human Pricing Section
+         ========================================================================== -->
+    <section class="section" id="pricing">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Transparent Pricing</span>
+          </div>
+          <h2 class="section-title">A Single, Honest Price. Zero Subscriptions.</h2>
+          <p class="section-subtitle">
+            No monthly fees. No cloud accounts to renew.<br>
+            Pay once and own a reliable remote camera controller for life.
+          </p>
+        </div>
+
+        <div class="pricing-card-wrap">
+          <div class="pricing-flagship-card">
+            <div class="urgency-beacon-pill">
+              <span class="beacon-dot"></span>
+              <span>● 47 of 100 Early Adopter Passes Claimed</span>
+            </div>
+
+            <div class="pricing-plan-name">Lifetime Founder Pass</div>
+
+            <div class="price-display">
+              <span class="price-currency">₹</span>
+              <span class="price-amount">1499</span>
+              <span class="price-slashed">₹2,999</span>
+            </div>
+
+            <div class="pricing-cadence">One-Time Payment • Lifetime Updates Included • $18 USD</div>
+
+            <ul class="pricing-features-list">
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><strong>Lifetime App Updates:</strong> All future features, speed optimizations & upgrades forever</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Full Android Companion Application (Direct APK install)</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Zero-install Browser Dashboard (Works on Mac, PC, Linux, iPad)</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Unlimited 4K recordings & photo snapshots</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Front / Rear lens toggling & Framing Snapshot test</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>100% Offline-First: Zero cloud servers, no account tracking</span>
+              </li>
+            </ul>
+
+            <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full" style="width: 100%; font-size: 1.05rem;">
+              Buy Lifetime Access →
+            </a>
+
+            <!-- 7-Day Money-Back & Free Custom Feature Promise -->
+            <div class="pricing-risk-free-card">
+              <div class="risk-free-header">
+                <span class="risk-free-icon">🛡️</span>
+                <span class="risk-free-title">7-Day Money-Back &amp; Free Custom Feature Promise</span>
+              </div>
+              <p class="risk-free-text">
+                Test Podium Remote for a full week. If you don't like the application, you can get a <strong>100% money-back refund within one week</strong>, no questions asked. Or within one week if you want some more features or new updates, you can keep telling Kiran on WhatsApp and he will <strong>update it free of cost</strong> to you!
+              </p>
+            </div>
+
+            <div class="pricing-guarantee-note">
+              🔒 1-Click WhatsApp to Founder • Secure UPI / Card Payment Link → Instant APK Delivery
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         6.5 Platform Availability & Community iPhone Vote Section
+         ========================================================================== -->
+    <section class="section platform-vote-section" id="platform-vote">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Platform Availability &amp; Roadmap</span>
+          </div>
+          <h2 class="section-title">Currently on Android. Want it on iPhone?</h2>
+          <p class="section-subtitle">
+            Podium Remote is available today as an offline Android APK. If you shoot with an iPhone or iPad, vote below to tell Kiran directly and accelerate the private Apple TestFlight release!
+          </p>
+        </div>
+
+        <div class="platform-cards-grid">
+          <!-- Card 1: Android (Available Now) -->
+          <div class="platform-card platform-android" style="background: linear-gradient(180deg, #161d19 0%, #101412 100%); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 3px solid #5ef579; border-radius: 20px; padding: 2.2rem 2rem; display: flex; flex-direction: column; box-shadow: 0 16px 40px rgba(0,0,0,0.5);">
+            <div class="platform-badge live" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 7px; padding: 5px 14px; border-radius: 999px; background: rgba(94, 245, 121, 0.15); color: #72ff88; border: 1px solid rgba(94, 245, 121, 0.3); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 1.25rem;">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #5ef579; box-shadow: 0 0 8px #5ef579; display: inline-block;"></span>
+              <span>AVAILABLE NOW</span>
+            </div>
+            <div class="platform-icon-wrap android-icon-wrap" style="width: 52px; height: 52px; border-radius: 14px; background: rgba(94, 245, 121, 0.1); border: 1px solid rgba(94, 245, 121, 0.25); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(94, 245, 121, 0.12);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#5ef579">
+                <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5802 8.411 13.8447 8 12 8s-3.5802.411-5.1368.9497L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/>
+              </svg>
+            </div>
+            <h3 class="platform-name">Android Application</h3>
+            <p class="platform-desc">
+              Direct offline APK file delivered instantly straight to your WhatsApp. Compatible with Android 8.0 through Android 15+.
+            </p>
+            <ul class="platform-specs" style="list-style: none !important; list-style-type: none !important; margin: 0 0 1.8rem 0; padding: 0;">
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check">✓</span>
+                <span>Instant WhatsApp APK file delivery</span>
+              </li>
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check">✓</span>
+                <span>Native 4K UHD CameraX recording</span>
+              </li>
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check">✓</span>
+                <span>100% offline Personal Hotspot link</span>
+              </li>
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check">✓</span>
+                <span>7-Day Money-Back &amp; Free Feature Promise</span>
+              </li>
+            </ul>
+            <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-platform" style="width: 100%; justify-content: center; padding: 0.95rem 1.4rem; font-size: 0.95rem; border-radius: 999px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5802 8.411 13.8447 8 12 8s-3.5802.411-5.1368.9497L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/>
+              </svg>
+              Get Android APK (₹1499) →
+            </a>
+          </div>
+
+          <!-- Card 2: Apple iOS (Vote for iPhone) -->
+          <div class="platform-card platform-ios flagship-vote" style="background: linear-gradient(180deg, #1c2420 0%, #111614 100%); border: 1px solid rgba(255, 255, 255, 0.15); border-top: 3px solid #ffffff; border-radius: 20px; padding: 2.2rem 2rem; display: flex; flex-direction: column; box-shadow: 0 16px 40px rgba(0,0,0,0.6);">
+            <div class="platform-badge vote" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 7px; padding: 5px 14px; border-radius: 999px; background: rgba(255, 184, 0, 0.15); color: #ffd875; border: 1px solid rgba(255, 184, 0, 0.3); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 1.25rem;">
+              <span>🔥</span>
+              <span>CAST YOUR VOTE</span>
+            </div>
+            <div class="platform-icon-wrap apple-icon-wrap" style="width: 52px; height: 52px; border-radius: 14px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);">
+              <svg width="26" height="26" viewBox="0 0 170 170" fill="#ffffff">
+                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.99-3.26-7.94-8.08-11.87-14.48-6.13-10.02-10.66-21.35-13.6-34.02-2.94-12.67-4.41-24.36-4.41-35.08 0-15.11 3.5-27.42 10.51-36.93 7.01-9.51 16.03-14.37 27.06-14.59 5.39 0 11.17 1.34 17.34 4.02 6.17 2.68 10.15 4.07 11.95 4.17 1.48-.1 5.6-1.57 12.37-4.4 6.77-2.83 12.87-4.14 18.29-3.93 13.9.76 24.88 5.75 32.93 14.97-12.18 7.39-18.17 17.41-17.96 30.06.21 9.79 3.99 17.97 11.34 24.54 7.35 6.57 16.09 10.37 26.22 11.4-2.4 7.18-5.45 14.48-9.15 21.91zM119.22 33.15c0-7.46 2.69-14.53 8.08-21.21 5.39-6.68 11.97-10.95 19.74-12.81.11 1.09.16 2.07.16 2.94 0 7.28-2.81 14.4-8.43 21.37-5.62 6.97-12.42 11.23-20.4 12.79-.11-.98-.15-2.01-.15-3.08z"/>
+              </svg>
+            </div>
+            <h3 class="platform-name">iPhone &amp; iPad (iOS)</h3>
+            <p class="platform-desc">
+              In active planning for Apple devices. Vote now to tell Kiran directly. Early voters get free priority access to the private Apple TestFlight beta!
+            </p>
+            <ul class="platform-specs" style="list-style: none !important; list-style-type: none !important; margin: 0 0 1.8rem 0; padding: 0;">
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check apple">✓</span>
+                <span>AVFoundation native 4K ProRes &amp; HEVC engine</span>
+              </li>
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check apple">✓</span>
+                <span>Zero-cloud offline Personal Hotspot Wi-Fi</span>
+              </li>
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check apple">✓</span>
+                <span>Direct Apple TestFlight beta invite link</span>
+              </li>
+              <li style="list-style: none !important; list-style-type: none !important; display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem;">
+                <span class="spec-check apple">✓</span>
+                <span>Priority founder direct feedback line</span>
+              </li>
+            </ul>
+            <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20the%20application%20in%20iPhone.%20Please%20update%20me%20once%20it%20is%20ready." target="_blank" rel="noopener noreferrer" class="btn btn-platform btn-vote-apple" style="width: 100%; justify-content: center; padding: 0.95rem 1.4rem; font-size: 0.95rem; border-radius: 999px; text-align: center; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none; background: #ffffff !important; color: #0b0f0d !important; border: 1px solid #ffffff; box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);">
+              <svg width="18" height="18" viewBox="0 0 170 170" fill="currentColor">
+                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.99-3.26-7.94-8.08-11.87-14.48-6.13-10.02-10.66-21.35-13.6-34.02-2.94-12.67-4.41-24.36-4.41-35.08 0-15.11 3.5-27.42 10.51-36.93 7.01-9.51 16.03-14.37 27.06-14.59 5.39 0 11.17 1.34 17.34 4.02 6.17 2.68 10.15 4.07 11.95 4.17 1.48-.1 5.6-1.57 12.37-4.4 6.77-2.83 12.87-4.14 18.29-3.93 13.9.76 24.88 5.75 32.93 14.97-12.18 7.39-18.17 17.41-17.96 30.06.21 9.79 3.99 17.97 11.34 24.54 7.35 6.57 16.09 10.37 26.22 11.4-2.4 7.18-5.45 14.48-9.15 21.91zM119.22 33.15c0-7.46 2.69-14.53 8.08-21.21 5.39-6.68 11.97-10.95 19.74-12.81.11 1.09.16 2.07.16 2.94 0 7.28-2.81 14.4-8.43 21.37-5.62 6.97-12.42 11.23-20.4 12.79-.11-.98-.15-2.01-.15-3.08z"/>
+              </svg>
+              Vote for iPhone app on WhatsApp →
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         7. Objection-Crushing FAQ Accordion
+         ========================================================================== -->
+    <section class="section" id="faq">
+      <div class="container container-text">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>Direct Answers</span>
+          </div>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">
+            Everything you need to know about connectivity, phone storage, and safety.
+          </p>
+        </div>
+
+        <div class="faq-accordion-wrap">
+          <!-- FAQ 1 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Does Podium Remote consume my phone's cellular mobile data?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Not a single megabyte. When you turn on your phone's personal hotspot, Podium Remote establishes a direct, private AirSync™ connection between your phone and your laptop browser. All director commands travel entirely over this offline hardware link without touching the internet or using your cellular data balance. You can even shoot in full Airplane Mode.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Why doesn't it stream continuous live video to my laptop?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Continuous video streaming is the #1 reason why other camera apps overheat phones within 15 minutes, drain battery, and compress 4K footage. By utilizing our proprietary <strong>ColdSensor™ 4K Engine</strong> directly on the phone's hardware sensor, your device stays completely cool and records at pristine optical bitrates. For framing verification, you get an instant <strong>"Check Framing Snapshot"</strong> button without overheating stream overhead.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>What happens if my laptop disconnects or goes to sleep while recording?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Your recording is 100% safe! The Android application runs as a foreground service with camera wake-lock. If your laptop lid closes, Wi-Fi fluctuates, or the browser tab closes, the phone continues recording uninterrupted. As soon as you reopen the dashboard, it immediately re-syncs elapsed time and recording status.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>How do I purchase Podium Remote and receive the APK?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Click any "Buy Lifetime Access" button on this page to connect directly with the team of Podium Remote on WhatsApp. They will send you the secure payment link (UPI, Google Pay, PhonePe, or International Card for ₹1,499 / $18 USD). Complete the payment and you will instantly get access to the Android APK file, your lifetime license pass with all future updates, and a 60-second quick-start guide right in your chat.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Is the connection secure in crowded auditoriums? Can anyone else access my camera?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                It is completely secure and isolated. Podium Remote operates exclusively over your phone's personal, password-protected hotspot. Only the laptop that has entered your hotspot password can open the cockpit. There are zero cloud databases, no public relays, and zero risk of anyone in the audience or venue accessing your camera or footage.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Which laptops and browsers are supported? Do I need to install any software?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Zero software, drivers, or browser extensions are required on your computer. Podium Remote works seamlessly in Google Chrome, Apple Safari, Microsoft Edge, Brave, and Mozilla Firefox across macOS (MacBook Air, Pro, iMac), Windows 10/11, Linux, Chromebooks, and iPads. As long as your laptop has a web browser, it instantly becomes a camera director cockpit.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 7 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Does it support Ultra-Wide lenses, Front cameras, and full 4K UHD?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Yes! Podium Remote pairs with your phone's native hardware sensors through our ColdSensor™ engine. If your Android phone physically supports 4K UHD recording, Ultra-Wide, Main, or Front selfie lenses, you can remotely toggle lenses, take high-resolution test framing snapshots, and record pristine uncompressed footage directly to your phone's internal storage.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 8 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Where are recorded 4K videos saved, and how do I transfer them to my laptop?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Every recording is saved in full, uncompressed 4K bitrate directly into your phone's internal camera storage (DCIM / Camera roll). No compressed cloud copies! When your shoot ends, simply plug in a USB-C cable for 10Gbps transfers straight into Premiere Pro, DaVinci Resolve, or Final Cut, or use Quick Share / local Wi-Fi transfer without wasting any mobile internet.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 9 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>What happens if my phone gets a phone call or notification while recording?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Podium Remote runs as an Android Foreground Service with an active WakeLock and camera priority lock, preventing background system tasks from killing your recording. Because Podium Remote operates 100% offline via your personal hotspot without requiring internet, we recommend flipping on "Do Not Disturb" or Airplane Mode during high-stakes shoots so incoming phone calls or WhatsApp ringers never disrupt your take.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 10 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Will my phone battery drain or overheat during long 1-to-2 hour takes?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                No! Continuous video preview streaming is what burns phone processors and causes camera thermal shutdowns in ordinary apps. Podium Remote eliminates this with our <strong>ColdSensor™ 4K Engine</strong> and an instant <strong>Remote OLED Screen Sleep</strong> toggle on your laptop cockpit. This turns off your phone's display panel while the camera continues recording at full 4K, saving over 60% battery life and keeping your device completely cool.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 11 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>What is your 7-day money-back guarantee &amp; free custom update promise?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                You have a full 7 days to test Podium Remote in your studio or events. If you don't like the application, simply message Kiran on WhatsApp within one week for a 100% money-back refund, no questions asked. Even better: within your first week, if you want some more features or new updates for your camera workflow, you can keep telling Kiran directly and he will build and update it free of cost for you!
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ 12 -->
+          <div class="faq-item">
+            <button class="faq-trigger" aria-expanded="false">
+              <span>Is Podium Remote coming to iPhone (iOS)? How do I get it?</span>
+              <div class="faq-icon-rotator">+</div>
+            </button>
+            <div class="faq-content">
+              <p class="faq-answer-text">
+                Yes! While Podium Remote is currently available exclusively on Android, an iOS version is in active planning. You can vote for the iPhone release in our Platform Vote section above or tap the WhatsApp button to send Kiran a quick message: <em>"Hi Kiran, I want the application in iPhone. Please update me once it is ready."</em> Early voters will receive free priority invites to the private Apple TestFlight beta!
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         8. The Human Choice Section (The Fork in the Road)
+         ========================================================================== -->
+    <section class="section" id="choice">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-label">
+            <span class="dot"></span>
+            <span>The Decision</span>
+          </div>
+          <h2 class="section-title">Two Ways To Record Your Next Event</h2>
+        </div>
+
+        <div class="choice-cards-grid">
+          <!-- Option 1: The Old Way -->
+          <div class="choice-card old-way">
+            <div>
+              <div class="choice-eyebrow">✕ OPTION 1: THE OLD WAY</div>
+              <h3 class="choice-title">The Frustrating Tripod Walk</h3>
+              <ul class="choice-list">
+                <li>✕ Jogging to the tripod before every single speaker starts</li>
+                <li>✕ Accidentally bumping the tripod and ruining your camera framing</li>
+                <li>✕ Trusting cheap Bluetooth buttons that fail with zero feedback</li>
+                <li>✕ Spending hours in post-production trimming out awkward walk dead-air</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Option 2: Podium Remote -->
+          <div class="choice-card podium-way">
+            <div>
+              <div class="choice-eyebrow">✓ OPTION 2: THE PODIUM REMOTE WAY</div>
+              <h3 class="choice-title">Stay Where You Are</h3>
+              <ul class="choice-list">
+                <li>✓ Sit comfortably in the audience or at the podium with your laptop</li>
+                <li>✓ 1-click instantaneous start and stop recording over direct hotspot</li>
+                <li>✓ Live visual confirmation: Elapsed timer, battery %, storage gauge</li>
+                <li>✓ Pristine uncompressed 4K video saved safely to your phone storage</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         9. Final Conversion CTA Section
+         ========================================================================== -->
+        <section class="section" id="download">
+      <div class="container">
+        
+        <div class="reachout-box">
+          <div class="section-label" style="margin:0 auto 1.2rem;">
+            <span class="dot"></span>
+            <span>Launch Day Access</span>
+          </div>
+
+          <h2 class="final-cta-title">
+            Never Walk To Your Tripod Mid-Take Again.
+          </h2>
+          
+          <p class="final-cta-desc">
+            Built with intention by <strong>Kiran Kumar</strong> as part of the <strong>365 Days Product Experiment</strong>. <br class="sub-break-desktop">One-time purchase for lifetime ownership. Tap below to get instant access on WhatsApp and start shooting.
+          </p>
+
+          <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+            <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20buy%20Podium%20Remote%20Lifetime%20Access.%20Please%20share%20the%20details!" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size:1.05rem; padding:1rem 2.2rem;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              Buy Lifetime Access →
+            </a>
+          </div>
+
+          <div class="cta-helper-text" style="margin-bottom:2.5rem;">
+            <span>🛡️ 100% Offline-First</span>
+            <span>•</span>
+            <span>💳 One-Time Payment</span>
+            <span>•</span>
+            <span>🔄 Lifetime Updates Included</span>
+            <span>•</span>
+            <span>⚡ Direct Founder Delivery</span>
+          </div>
+
+          <!-- Reach Out Channels Grid -->
+          <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top:2rem;">
+            <div style="font-size:0.9rem; font-weight:700; color:#cbdcd3; margin-bottom:1.2rem; text-transform:uppercase; letter-spacing:0.06em;">
+              💬 Direct Founder Support
+            </div>
+            <div class="reachout-channels-grid">
+              <a href="https://wa.me/918590658979?text=Hi%20Kiran%2C%20I%20want%20to%20connect%20regarding%20Podium%20Remote!" target="_blank" rel="noopener noreferrer" class="btn-channel btn-whatsapp">
+                <span>💬 DM on WhatsApp</span>
+              </a>
+              <a href="https://x.com/ErKiranKumar_" target="_blank" rel="noopener noreferrer" class="btn-channel btn-twitter">
+                <span>𝕏 DM on Twitter</span>
+              </a>
+              <a href="https://www.linkedin.com/in/kiran-kumar-sde/" target="_blank" rel="noopener noreferrer" class="btn-channel btn-linkedin">
+                <span>in Connect on LinkedIn</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       10. Founder Footer & Challenge Heritage
+       ========================================================================== -->
+  <footer class="site-footer" id="footer">
+    <div class="container footer-container">
+      <div class="footer-top">
+        <!-- Col 1: Brand & Bio -->
+        <div class="footer-brand">
+          <div class="brand-group">
+            <div class="brand-icon" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; flex-shrink: 0;">
+              <svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+                <rect width="108" height="108" rx="24" fill="#141a17"/>
+                <rect x="2" y="2" width="104" height="104" rx="22" stroke="#26332d" stroke-width="3"/>
+                <path d="M48 36H60L64 42H44L48 36Z" stroke="#c5a582" stroke-width="3.5" stroke-linejoin="round" fill="#1e2622"/>
+                <rect x="34" y="42" width="40" height="30" rx="4" stroke="#7a9a8b" stroke-width="4" fill="#18201c"/>
+                <circle cx="54" cy="57" r="9" fill="#d9777f"/>
+                <circle cx="54" cy="57" r="14" stroke="#7a9a8b" stroke-width="1.8" stroke-dasharray="3 2.5"/>
+                <circle cx="51.5" cy="54.5" r="2.5" fill="#ffffff" opacity="0.6"/>
+              </svg>
+            </div>
+            <div class="brand-text-block">
+              <span class="brand-name">Podium Remote</span>
+              <span class="brand-tagline">RECORD ACROSS THE ROOM. STAY WHERE YOU ARE.</span>
+            </div>
+          </div>
+          <p class="footer-bio">
+            Crafted by <strong>Kiran Kumar</strong> • Oracle SDE.<br>
+            Built with craft & care in Bengaluru, Bharat 🇮🇳
+          </p>
+          <div class="footer-challenge-badge">
+            <span class="badge-dot"></span> 365 Days Product Experiment | Day 4
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation -->
+        <div class="footer-links-group">
+          <span class="footer-col-title">Navigation</span>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#demo-video">Video Demo</a>
+          <a href="#problem">The Problem</a>
+          <a href="#features">Core USPs</a>
+          <a href="#comparison">Why Us</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#platform-vote">iPhone Vote</a>
+          <a href="#faq">FAQ</a>
+        </div>
+
+        <!-- Col 3: Founder Channels -->
+        <div class="footer-links-group footer-social-col">
+          <span class="footer-col-title">Founder Channels</span>
+          <div class="footer-social-icons-list">
+            <a href="https://x.com/ErKiranKumar_" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Twitter / X (@ErKiranKumar_)">
+              <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
+              <span>Twitter / X</span>
+            </a>
+            <a href="https://www.linkedin.com/in/kiran-kumar-sde/" target="_blank" rel="noopener noreferrer" class="social-icon-link social-li" title="LinkedIn (kiran-kumar-sde)">
+              <span class="social-icon-box icon-li"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.62 1.62 0 1 0 0-3.24 1.62 1.62 0 0 0 0 3.24m1.4 9.74v-8.37H5.06v8.37h2.8z"/></svg></span>
+              <span>LinkedIn</span>
+            </a>
+            <a href="https://chat.whatsapp.com/IsuedXNntC66BHgE1JfXwX" target="_blank" rel="noopener noreferrer" class="social-icon-link social-wa" title="Join WhatsApp Community">
+              <span class="social-icon-box icon-wa"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 2C6.496 2 2 6.494 2 12.029c0 1.83.491 3.548 1.344 5.031L2 22l5.09-1.332a9.98 9.98 0 0 0 4.941 1.36h.005c5.533 0 10.029-4.494 10.029-10.029C22.065 6.494 17.568 2 12.031 2zm5.836 14.199c-.244.688-1.42 1.319-1.956 1.365-.494.043-1.127.182-3.662-.871-2.91-1.21-4.789-4.17-4.935-4.364-.145-.194-1.185-1.577-1.185-3.007 0-1.43.748-2.133 1.013-2.423.266-.29.58-.363.774-.363.193 0 .387.002.556.01.18.01.42-.069.658.502.245.589.835 2.033.908 2.179.073.145.121.315.024.508-.097.194-.145.315-.29.484-.145.17-.305.38-.436.51-.145.144-.297.302-.128.592.17.29.754 1.243 1.616 2.012 1.109.989 2.046 1.296 2.336 1.441.29.145.46.121.629-.073.17-.193.725-.845.918-1.136.194-.29.387-.242.653-.145.266.097 1.693.799 1.984.944.29.145.484.218.556.339.073.121.073.702-.17 1.39z"/></svg></span>
+              <span>WhatsApp Community</span>
+            </a>
+            <a href="https://wa.me/918590658979" target="_blank" rel="noopener noreferrer" class="social-icon-link social-wa" title="WhatsApp (+91 8590658979)">
+              <span class="social-icon-box icon-wa"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 2C6.496 2 2 6.494 2 12.029c0 1.83.491 3.548 1.344 5.031L2 22l5.09-1.332a9.98 9.98 0 0 0 4.941 1.36h.005c5.533 0 10.029-4.494 10.029-10.029C22.065 6.494 17.568 2 12.031 2zm5.836 14.199c-.244.688-1.42 1.319-1.956 1.365-.494.043-1.127.182-3.662-.871-2.91-1.21-4.789-4.17-4.935-4.364-.145-.194-1.185-1.577-1.185-3.007 0-1.43.748-2.133 1.013-2.423.266-.29.58-.363.774-.363.193 0 .387.002.556.01.18.01.42-.069.658.502.245.589.835 2.033.908 2.179.073.145.121.315.024.508-.097.194-.145.315-.29.484-.145.17-.305.38-.436.51-.145.144-.297.302-.128.592.17.29.754 1.243 1.616 2.012 1.109.989 2.046 1.296 2.336 1.441.29.145.46.121.629-.073.17-.193.725-.845.918-1.136.194-.29.387-.242.653-.145.266.097 1.693.799 1.984.944.29.145.484.218.556.339.073.121.073.702-.17 1.39z"/></svg></span>
+              <span>DM on WhatsApp</span>
+            </a>
+            <a href="https://github.com/Kiran-pro2001" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="GitHub (Kiran-pro2001)">
+              <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></span>
+              <span>GitHub</span>
+            </a>
+            <a href="https://www.youtube.com/@KiranKumar-wu9fp" target="_blank" rel="noopener noreferrer" class="social-icon-link social-yt" title="YouTube (Personal Tech)">
+              <span class="social-icon-box icon-yt"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>
+              <span>YouTube (Tech)</span>
+            </a>
+            <a href="https://telegram.me/kiranprodev" target="_blank" rel="noopener noreferrer" class="social-icon-link social-tg" title="Telegram (@kiranprodev)">
+              <span class="social-icon-box icon-tg"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span>
+              <span>Telegram</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 4: Writings, Community & Socials -->
+        <div class="footer-links-group footer-social-col">
+          <span class="footer-col-title">Writings & Community</span>
+          <div class="footer-social-icons-list">
+            <a href="https://substack.com/@kirankumar778023" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Substack">
+              <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg></span>
+              <span>Substack</span>
+            </a>
+            <a href="https://medium.com/@kk9840042" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Medium">
+              <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg></span>
+              <span>Medium</span>
+            </a>
+            <a href="https://www.youtube.com/@codingmuggers2754" target="_blank" rel="noopener noreferrer" class="social-icon-link social-yt" title="YouTube (Coding Muggers NGO)">
+              <span class="social-icon-box icon-yt"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>
+              <span>Coding Muggers (NGO)</span>
+            </a>
+            <a href="https://www.threads.com/@kiran_kumar_20.0" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Threads (@kiran_kumar_20.0)">
+              <span class="social-icon-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24C5.467 24 0 18.533 0 11.814 0 5.094 5.467-.372 12.186-.372c6.72 0 12.186 5.466 12.186 12.186 0 6.72-5.466 12.186-12.186 12.186zm0-22.18c-5.51 0-9.994 4.484-9.994 9.994 0 5.51 4.484 9.994 9.994 9.994 5.51 0 9.994-4.484 9.994-9.994 0-5.51-4.484-9.994-9.994-9.994z"/></svg></span>
+              <span>Threads</span>
+            </a>
+            <a href="https://www.instagram.com/kiran_kumar_20.0/" target="_blank" rel="noopener noreferrer" class="social-icon-link social-ig" title="Instagram (@kiran_kumar_20.0)">
+              <span class="social-icon-box icon-ig"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></span>
+              <span>Instagram</span>
+            </a>
+            <a href="https://www.facebook.com/share/1Bu7SAkjxH/" target="_blank" rel="noopener noreferrer" class="social-icon-link social-fb" title="Facebook">
+              <span class="social-icon-box icon-fb"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></span>
+              <span>Facebook</span>
+            </a>
+            <a href="https://www.reddit.com/user/No-Helicopter-6374/" target="_blank" rel="noopener noreferrer" class="social-icon-link social-rd" title="Reddit">
+              <span class="social-icon-box icon-rd"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.703zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.197-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg></span>
+              <span>Reddit</span>
+            </a>
+            <a href="mailto:kk9840042@gmail.com" class="social-icon-link social-mail" title="Email / Microsoft Teams">
+              <span class="social-icon-box icon-mail"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              <span>Email / Teams</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Meta Copyright -->
+      <div class="footer-bottom">
+        <p>© 2026 Podium Remote. All rights reserved. 100% Offline-First Architecture.</p>
+        <p class="footer-subtext">💬 WhatsApp Community: <a href="https://chat.whatsapp.com/IsuedXNntC66BHgE1JfXwX" target="_blank" rel="noopener noreferrer" style="color:#72ff88; text-decoration:underline;">Join WhatsApp Channel / Group</a> • Built by Kiran Kumar</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+
+  <!-- Microsoft Clarity (Zero-bloat user session tracking) -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "podium_clarity_id");
+  </script>
+</body>
+</html>

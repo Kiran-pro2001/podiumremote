@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main">
+
+    <!-- CameraX Viewfinder Preview (Full Sensor Fill Behind Translucent Glass) -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/controlPanelCard"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Top Bar: 4-Capsule Translucent 3D Glassmorphic HUD (See-Through to Camera) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/topBarCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="6dp"
+        app:cardBackgroundColor="#80141816"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="5dp"
+            android:gravity="center_vertical">
+
+            <!-- Capsule 1: Standby / Recording Status (3D Glassmorphic Pill) -->
+            <TextView
+                android:id="@+id/tvTally"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● STANDBY"
+                android:textColor="@color/accent_sage_light"
+                android:textStyle="bold"
+                android:textSize="9.5sp"
+                android:letterSpacing="0.04"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_pill_standby" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Capsule 2: Active Lens in 3D Glassmorphic Box -->
+            <TextView
+                android:id="@+id/tvLensInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REAR (4K)"
+                android:textColor="@color/white"
+                android:textSize="9.5sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_hud_capsule"
+                android:layout_marginEnd="5dp" />
+
+            <!-- Capsule 3: Battery Level with Icon in 3D Glassmorphic Box -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_hud_capsule"
+                android:layout_marginEnd="5dp">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_battery"
+                    android:contentDescription="Battery"
+                    android:layout_marginEnd="3dp" />
+
+                <TextView
+                    android:id="@+id/tvBatteryInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="75%"
+                    android:textColor="@color/accent_sand"
+                    android:textStyle="bold"
+                    android:textSize="9.5sp" />
+            </LinearLayout>
+
+            <!-- Capsule 4: Free Storage with Icon in 3D Glassmorphic Box -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_hud_capsule">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_storage"
+                    android:contentDescription="Storage"
+                    android:layout_marginEnd="3dp" />
+
+                <TextView
+                    android:id="@+id/tvStorageInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21.6 GB Free"
+                    android:textColor="@color/accent_sand"
+                    android:textStyle="bold"
+                    android:textSize="9.5sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Translucent Collapsible Laptop Cockpit Address Card (Minimizable to unblock tripod view) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/hotspotCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="6dp"
+        app:cardBackgroundColor="#8A141816"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@+id/topBarCard">
+
+        <LinearLayout
+            android:id="@+id/hotspotBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp">
+
+            <!-- Line 1: Header with Collapse / Dropdown Chevron Actuator -->
+            <LinearLayout
+                android:id="@+id/btnToggleCollapseAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="LAPTOP COCKPIT ADDRESS"
+                    android:textColor="@color/accent_sage"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08" />
+
+                <!-- Compact Monospace address pill shown when minimized -->
+                <TextView
+                    android:id="@+id/tvMinAddressPill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10.26.185.48:8080"
+                    android:textColor="@color/accent_sand"
+                    android:textSize="11sp"
+                    android:fontFamily="monospace"
+                    android:visibility="gone"
+                    android:layout_marginEnd="6dp" />
+
+                <!-- Dropdown / Minimize Chevron Icon -->
+                <ImageView
+                    android:id="@+id/ivCollapseChevron"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_chevron_up"
+                    app:tint="@color/accent_sage"
+                    android:contentDescription="Minimize / Expand Cockpit Address" />
+            </LinearLayout>
+
+            <!-- Collapsible Body (Hidden when user collapses the card to adjust tripod framing) -->
+            <LinearLayout
+                android:id="@+id/layoutAddressBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Line 2: Monospace IP Address (Prominent & Clear) -->
+                <TextView
+                    android:id="@+id/tvServerAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="http://10.26.185.48:8080"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:fontFamily="monospace"
+                    android:singleLine="true"
+                    android:ellipsize="middle" />
+
+                <!-- Line 3: Grid View Row for 3 Action Buttons (Large Icons) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp">
+
+                    <!-- 1. Copy Link Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCopyLink"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="0.85"
+                        android:text="Copy"
+                        android:textSize="10.5sp"
+                        android:textColor="@color/white"
+                        app:icon="@drawable/ic_copy"
+                        app:iconSize="17dp"
+                        app:iconTint="@color/white"
+                        app:iconPadding="4dp"
+                        app:strokeColor="@color/accent_sage"
+                        android:paddingHorizontal="2dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:singleLine="true"
+                        android:layout_marginEnd="5dp" />
+
+                    <!-- 2. Share to PC Button (Single-Liner, Large Icon) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnShareToPc"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1.35"
+                        android:text="Share to PC"
+                        android:textSize="10.5sp"
+                        android:textColor="#101312"
+                        app:icon="@drawable/ic_share"
+                        app:iconSize="18dp"
+                        app:iconTint="#101312"
+                        app:iconPadding="4dp"
+                        app:backgroundTint="@color/accent_sand"
+                        android:paddingHorizontal="2dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:singleLine="true"
+                        android:layout_marginEnd="5dp" />
+
+                    <!-- 3. Connect through QR Button (Enlarged QR Icon) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnToggleQr"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1.05"
+                        android:text="Scan QR"
+                        android:textSize="10.5sp"
+                        android:textColor="@color/accent_sand"
+                        app:icon="@drawable/ic_qr_code"
+                        app:iconSize="20dp"
+                        app:iconTint="@color/accent_sand"
+                        app:iconPadding="4dp"
+                        app:strokeColor="@color/accent_sand"
+                        android:paddingHorizontal="2dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:singleLine="true"
+                        android:contentDescription="Connect through QR Code" />
+                </LinearLayout>
+
+                <!-- Line 4: Explicit User Guide Caption -->
+                <TextView
+                    android:id="@+id/tvClientStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open on laptop browser, or tap Share to PC / Scan QR"
+                    android:textColor="@color/text_muted"
+                    android:textSize="10sp"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Modal QR Code Card Overlay with Close (x) Button -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/qrContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:cardBackgroundColor="#F21A1F1D"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:gravity="center">
+
+            <!-- Top Close Button Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="CONNECT THROUGH QR"
+                    android:textColor="@color/accent_sage"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.04" />
+
+                <ImageButton
+                    android:id="@+id/btnCloseQr"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_close"
+                    android:contentDescription="Close QR" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivQrCode"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:background="@color/white"
+                android:padding="8dp"
+                android:layout_marginTop="12dp"
+                android:contentDescription="Connection QR Code" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan this QR code from your laptop webcam or tablet to open cockpit instantly."
+                android:textColor="@color/text_muted"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- In-App Glassmorphic Studio Event Toast (Positioned cleanly ABOVE timer and bottom buttons) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layoutInAppToast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:cardBackgroundColor="#CC161B19"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="8dp"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/controlPanelCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp">
+
+            <TextView
+                android:id="@+id/tvToastMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● 4K Recording Started"
+                android:textColor="@color/white"
+                android:textSize="11.5sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Bottom Controls & Studio Cockpit Deck Card (2-Liner Logical Matrix) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/controlPanelCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#F2161A19"
+        app:cardCornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp">
+
+            <!-- Studio Monospace Timer Readout -->
+            <TextView
+                android:id="@+id/tvTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="00:00:00"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace" />
+
+            <!-- Row 1: [ PREPARATION & COMPOSITION ] (Framing | Flip | Photo) - 3 Equal Columns (1:1:1) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="6dp">
+
+                <!-- 1. Check Framing Button (20dp Autofocus Crosshairs) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCheckFraming"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Framing"
+                    android:textSize="11.5sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/accent_sand"
+                    app:icon="@drawable/ic_framing_lens"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/accent_sand"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:cornerRadius="14dp"
+                    app:strokeWidth="1.5dp"
+                    app:strokeColor="@color/accent_sand"
+                    app:elevation="4dp"
+                    android:paddingHorizontal="4dp"
+                    android:singleLine="true"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:layout_marginEnd="6dp" />
+
+                <!-- 2. Flip Lens Button (20dp Camera Body + Swap Arrows) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSwitchCamera"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Flip"
+                    android:textSize="11.5sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/accent_sage"
+                    app:icon="@drawable/ic_flip_camera_pro"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/accent_sage"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:cornerRadius="14dp"
+                    app:strokeWidth="1.5dp"
+                    app:strokeColor="@color/accent_sage"
+                    app:elevation="4dp"
+                    android:paddingHorizontal="4dp"
+                    android:singleLine="true"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:layout_marginEnd="6dp" />
+
+                <!-- 3. Save Still Photo Button (20dp DSLR Camera with Aperture Ring) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCapturePhoto"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Photo"
+                    android:textSize="11.5sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:icon="@drawable/ic_photo_camera_pro"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:cornerRadius="14dp"
+                    app:strokeWidth="1.5dp"
+                    app:strokeColor="@color/border_glass"
+                    app:elevation="4dp"
+                    android:paddingHorizontal="4dp"
+                    android:singleLine="true"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
+            </LinearLayout>
+
+            <!-- Row 2: [ HERO BROADCAST & DISPLAY ] (Record | Stop | Dim) - 3 Equal Columns (1:1:1) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <!-- 4. Start Recording Button (20dp Camcorder Hero Actuator) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRecordStart"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Record"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#101312"
+                    app:icon="@drawable/ic_video_record_pro"
+                    app:iconSize="20dp"
+                    app:iconTint="#101312"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:cornerRadius="14dp"
+                    app:backgroundTint="@color/accent_green"
+                    app:elevation="6dp"
+                    android:paddingHorizontal="4dp"
+                    android:singleLine="true"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:layout_marginEnd="6dp" />
+
+                <!-- 5. Stop Recording Button (20dp Stop Shield Hero Actuator) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRecordStop"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Stop"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:icon="@drawable/ic_video_stop_pro"
+                    app:iconSize="20dp"
+                    app:iconTint="@color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:cornerRadius="14dp"
+                    app:backgroundTint="@color/border_subtle"
+                    app:elevation="4dp"
+                    android:enabled="false"
+                    android:paddingHorizontal="4dp"
+                    android:singleLine="true"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:layout_marginEnd="6dp" />
+
+                <!-- 6. Display Sleep / Wake Button (20dp Moon / Sun Actuator) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDimScreen"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Dim"
+                    android:textSize="11.5sp"
+                    android:textStyle="bold"
+                    android:textColor="#E5C38D"
+                    app:icon="@drawable/ic_dim_moon"
+                    app:iconSize="20dp"
+                    app:iconTint="#E5C38D"
+                    app:iconGravity="textStart"
+                    app:iconPadding="4dp"
+                    app:cornerRadius="14dp"
+                    app:strokeWidth="1.5dp"
+                    app:strokeColor="#3B372C"
+                    app:elevation="4dp"
+                    android:paddingHorizontal="4dp"
+                    android:singleLine="true"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- AMOLED Blackout Overlay for Battery & Heat Saving with Dedicated Wake Actuator -->
+    <FrameLayout
+        android:id="@+id/blackoutOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:visibility="gone"
+        android:elevation="100dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingHorizontal="24dp">
+
+            <!-- Faint pulsing red tally dot -->
+            <TextView
+                android:id="@+id/tvDimTally"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● REC"
+                android:textColor="#55CC3333"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="monospace" />
+
+            <TextView
+                android:id="@+id/tvDimTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00:00"
+                android:textColor="#44FFFFFF"
+                android:textSize="32sp"
+                android:fontFamily="monospace"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Screen sleeping to protect battery &amp; prevent heat throttling"
+                android:textColor="#44888888"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:fontFamily="monospace"
+                android:layout_marginTop="14dp" />
+
+            <!-- Prominent Dedicated Glowing WAKE SCREEN Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWakeFromDim"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:text="☀️ WAKE SCREEN"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#101312"
+                app:icon="@drawable/ic_wake_sun"
+                app:iconSize="20dp"
+                app:iconTint="#101312"
+                app:iconPadding="8dp"
+                app:backgroundTint="@color/accent_sand"
+                app:cornerRadius="26dp"
+                android:paddingHorizontal="24dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:layout_marginTop="28dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Or tap anywhere on glass / click Wake from laptop"
+                android:textColor="#2A666666"
+                android:textSize="11sp"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
